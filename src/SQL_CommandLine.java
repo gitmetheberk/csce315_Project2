@@ -1,9 +1,9 @@
 
-public class driver {
+public class SQL_CommandLine {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }
