@@ -1,4 +1,5 @@
 # csce315_Project2
+https://people.engr.tamu.edu/choe/choe/courses/20fall/315/proj2.html
 
 # Sources:
 * https://www.w3schools.com/java/java_user_input.asp
