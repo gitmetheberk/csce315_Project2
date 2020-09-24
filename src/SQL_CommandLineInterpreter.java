@@ -74,6 +74,12 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(search_path(tokens[1], query));
 			}
 			
+		} else if (tokens[0].equals("jdb-show-all-tables")) {
+			results = results.concat(show_all_tables());
+			
+		} else if (tokens[0].equals("jdb-show-all-columns")) {
+			results = results.concat(show_all_columns());
+			
 		} else if (tokens[0].startsWith("jdb-productid-from-name")) {
 			if (tokens.length < 2) {
 				results = results.concat("ERROR: Name missing after jdb-productid-from-name\n");
@@ -320,6 +326,54 @@ public class SQL_CommandLineInterpreter {
 		// All results to be shown to the user should be appended to toReturn in the following format
 		// toReturn = toReturn.concat(SomeStringToRreturn);
 		
+		
+		return toReturn;
+	}
+	
+	private String show_all_tables() {
+		String toReturn = "";
+		
+		try {
+			DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+			ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			
+			while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+				   
+				 String tableName = tableList.getString("TABLE_NAME");
+				 toReturn += tableName + "\n";
+				 
+			}
+		}catch(SQLException se){
+			   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-show-all-tables\n");
+			   toReturn = toReturn.concat("Error: " + se + "\n");
+			   return toReturn;
+		}
+		
+		return toReturn;
+	}
+	
+	private String show_all_columns() {
+		String toReturn = "";
+		
+		try {
+			DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+			ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			
+			while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+				   
+				 String tableName = tableList.getString("TABLE_NAME");
+				 toReturn += "Columns for the " + tableName + " table:\n";
+				 ResultSet columns = metaData.getColumns("adventureworks", null, tableName, null);
+				 while(columns.next()) {
+					 toReturn += columns.getString("COLUMN_NAME") + "\n";
+				 }
+				 toReturn += "\n"; //space out columns for different tables 
+			}
+		}catch(SQLException se){
+			   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-show-all-columns\n");
+			   toReturn = toReturn.concat("Error: " + se + "\n");
+			   return toReturn;
+		}
 		
 		return toReturn;
 	}
