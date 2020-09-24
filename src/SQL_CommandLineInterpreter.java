@@ -228,8 +228,9 @@ public class SQL_CommandLineInterpreter {
 			   tableList.close();
 		   
 		   }catch(SQLException se){
-			      //Handle errors for JDBC
-			      se.printStackTrace();
+			   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-show-all-primary-keys\n");
+			   toReturn = toReturn.concat("Error: " + se + "\n");
+			   return toReturn;
 		   }
 		
 		   return toReturn;
@@ -245,14 +246,16 @@ public class SQL_CommandLineInterpreter {
 			  String sql = "USE adventureworks;";
 			  ResultSet rs = jdbc.query(sql);
 		      
-			   
+			  // Flag to provide the user with a message if no tables found
+			  boolean anyFound = false;
+			  
 			  while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
-				   
 				  String tableName = tableList.getString("TABLE_NAME"); 
 				  sql = "SHOW COLUMNS FROM " + tableName + " LIKE '" + column + "'";
 				  rs = jdbc.query(sql);
 
 				  if(rs.next()) { //if rs.next() returns false, then there are no columns for the table that match the column passed into the function
+					  anyFound = true;
 					  toReturn += tableName + "\n"; //storing in vector for now , just in case we need to do something with the tables that contain the column later
 				  }
 		    	  
@@ -261,13 +264,19 @@ public class SQL_CommandLineInterpreter {
 			   //deallocate resources used
 			   tableList.close();
 			   rs.close();
+			   
+			   // Provide the user with a message if no data found
+			   if (!anyFound) {
+				   toReturn = toReturn.concat("WARNING: No tables found with column " + column + "\n");
+			   }
+					
 	           
 	   }catch(SQLException se){
-	      //Handle errors for JDBC
-	      se.printStackTrace();
+		   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-find-column for column" + column + "\n");
+		   toReturn = toReturn.concat("Error: " + se + "\n");
+		   return toReturn;
 	   }
-		
-		
+	
 	   return toReturn;
 	}
 	
