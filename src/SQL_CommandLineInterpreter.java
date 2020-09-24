@@ -74,18 +74,6 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(search_path(tokens[1], query));
 			}
 			
-		} else if (tokens[0].equals("jdb-get-view")) {
-			if (tokens.length < 3) {
-				results = results.concat("ERROR: View name or SQL query not provided after jdb-get-view\n");
-				return results;
-			} else {
-				// Need to process the SQL query from the string before calling the function
-				String query = "";
-				query = input.replace(tokens[0] + " " + tokens[1] + " ", "");
-
-				results = results.concat(search_path(tokens[1], query));
-			}
-			
 		} else if (tokens[0].startsWith("jdb-productid-from-name")) {
 			if (tokens.length < 2) {
 				results = results.concat("ERROR: Name missing after jdb-productid-from-name\n");
@@ -207,23 +195,80 @@ public class SQL_CommandLineInterpreter {
 	private String show_all_primary_keys(){
 		String toReturn = "";
 		
-		// TODO Code from Holden
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
+		try {
+			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  
+			  String sql = "USE adventureworks;";
+			  jdbc.query(sql);
+			   
+			  boolean hasPrimaryKey;
+			  while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+				   
+				  String tableName = tableList.getString("TABLE_NAME"); 
+				  ResultSet keyList = metaData.getPrimaryKeys("adventureworks", null, tableName);
+
+				  toReturn += "(" + tableName + ", ";
+
+				  hasPrimaryKey = false;
+				  while (keyList.next()) { //it needs to be a while loop because each row contains data about each primary key (there could possibly be multiple primary keys)
+					  hasPrimaryKey = true;
+					  toReturn += keyList.getString("COLUMN_NAME") + ", ";
+				  }
+				  if (!hasPrimaryKey) {
+					  toReturn += "No Primary Key)\n"; //one of the tablles (purchaseorderheader) doesn't have a primary key???
+				  }
+				  else {
+					  toReturn = toReturn.substring(0, toReturn.length() - 2); //get rid of last comma and space
+					  toReturn += ")\n";
+				  }
+			   }
+			   
+			   //deallocate resources
+			   tableList.close();
+		   
+		   }catch(SQLException se){
+			      //Handle errors for JDBC
+			      se.printStackTrace();
+		   }
 		
-		
-		return toReturn;
+		   return toReturn;
 	}
 	
 	private String find_column(String column){
 		String toReturn = "";
 		
-		// TODO Code from Holden
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
+		try {
+			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  
+			  String sql = "USE adventureworks;";
+			  ResultSet rs = jdbc.query(sql);
+		      
+			   
+			  while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+				   
+				  String tableName = tableList.getString("TABLE_NAME"); 
+				  sql = "SHOW COLUMNS FROM " + tableName + " LIKE '" + column + "'";
+				  rs = jdbc.query(sql);
+
+				  if(rs.next()) { //if rs.next() returns false, then there are no columns for the table that match the column passed into the function
+					  toReturn += tableName + "\n"; //storing in vector for now , just in case we need to do something with the tables that contain the column later
+				  }
+		    	  
+			   }
+			   
+			   //deallocate resources used
+			   tableList.close();
+			   rs.close();
+	           
+	   }catch(SQLException se){
+	      //Handle errors for JDBC
+	      se.printStackTrace();
+	   }
 		
 		
-		return toReturn;
+	   return toReturn;
 	}
 	
 	private String search_path(String t1, String t2){
