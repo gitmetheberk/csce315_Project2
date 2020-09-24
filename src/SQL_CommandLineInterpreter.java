@@ -86,7 +86,44 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(search_path(tokens[1], query));
 			}
 			
-		// Catch invalid jdb- type command
+		} else if (tokens[0].startsWith("jdb-productid-from-name")) {
+			if (tokens.length < 2) {
+				results = results.concat("ERROR: Name missing after jdb-productid-from-name\n");
+				return results;
+			} else {
+				// Grab the full text from the original input and pass to the function
+				String name = "";
+				name = input.replace(tokens[0] + " ", "");
+
+				results = results.concat(productid_from_name(name));
+			}
+			
+		} else if (tokens[0].startsWith("jdb-productid-from-description")) {
+			if (tokens.length < 2) {
+				results = results.concat("ERROR: Description missing after jdb-productid-from-description\n");
+				return results;
+			} else {
+				// Grab the full text from the original input and pass to the function
+				String desc = "";
+				desc = input.replace(tokens[0] + " ", "");
+
+				results = results.concat(productid_from_description(desc));
+			}
+			
+		} else if (tokens[0].startsWith("jdb-locationid-from-name")) {
+			if (tokens.length < 2) {
+				results = results.concat("ERROR: Name missing after jdb-locationid-from-name\n");
+				return results;
+			} else {
+				// Grab the full text from the original input and pass to the function
+				String name = "";
+				name = input.replace(tokens[0] + " ", "");
+
+				results = results.concat(locationid_from_name(name));
+			}
+		
+			
+		// Catch invalid "jdb-" type command
 		} else if (tokens[0].startsWith("jdb-")) {
 			results = results.concat("ERROR: Invalid command\n");
 			return results;
@@ -99,6 +136,60 @@ public class SQL_CommandLineInterpreter {
 	
 		// Return the string
 		results = results.concat("\n");
+		return results;
+	}
+	
+	// Utility function, takes a ResultSet in, returns a formatted string
+	private String parse_ResultSet(ResultSet rs) {
+		String results = "";
+		try {
+			// Check for null result set
+			if (rs == null) {
+				results = results.concat("WARNING: Your query produced an error\n");
+				return results;
+			} else {
+				// Source: https://coderwall.com/p/609ppa/printing-the-result-of-resultset
+				// Grab the meta data for the ResultSet to get the number of columns
+				ResultSetMetaData rsmd = rs.getMetaData();
+				int columnsNumber = rsmd.getColumnCount();
+				
+				// Print row headers
+				for (int i = 1; i <= columnsNumber; i++) {
+					if (i > 1) results = results.concat(",  ");
+					results = results.concat(rsmd.getColumnName(i));
+				}
+				results = results.concat("\n");
+				
+				// Flag to avoid returning just column titles for empty ResultSet
+				boolean data = false;
+				
+				// Append returned data
+				while (rs.next()) {
+					data = true;
+					for (int i = 1; i <= columnsNumber; i++) {
+						if (i > 1) results = results.concat(",  ");
+						String columnValue = rs.getString(i);
+						
+						// This check is needed otherwise concat throws a nullptr exception
+						if (columnValue == null) {
+							continue;
+						}
+						results = results.concat(columnValue);
+					}
+					results = results.concat("\n");
+				}
+				
+				if (!data) {
+					results = "WARNING: Your query produced zero results\n";
+				}
+			}
+		} catch (SQLException e) {
+			results = results.concat("ERROR: An error occured while parsing query results\n");
+			results = results.concat(e + "\n");
+			return results;
+		}
+		
+		
 		return results;
 	}
 	
@@ -179,50 +270,52 @@ public class SQL_CommandLineInterpreter {
 		return toReturn;
 	}
 	
-	// Utility function, takes a ResultSet in, returns a formatted string
-	private String parse_ResultSet(ResultSet rs) {
-		String results = "";
-		try {
-			// Check for null result set
-			if (rs == null) {
-				results = results.concat("WARNING: Your query produced zero results\n");
-				return results;
-			} else {
-				// Source: https://coderwall.com/p/609ppa/printing-the-result-of-resultset
-				
-				// Grab the meta data for the result set to get the number of columns
-				ResultSetMetaData rsmd = rs.getMetaData();
-				int columnsNumber = rsmd.getColumnCount();
-				
-				// Print row headers
-				for (int i = 1; i <= columnsNumber; i++) {
-					if (i > 1) results = results.concat(",  ");
-					results = results.concat(rsmd.getColumnName(i));
-				}
-				results = results.concat("\n");
-				
-				// Print returned data
-				while (rs.next()) {
-					for (int i = 1; i <= columnsNumber; i++) {
-						if (i > 1) results = results.concat(",  ");
-						String columnValue = rs.getString(i);
-						
-						// This check is needed otherwise concat throws a nullptr exception
-						if (columnValue == null) {
-							continue;
-						}
-						results = results.concat(columnValue);
-					}
-					results = results.concat("\n");
-				}	
-			}
-		} catch (SQLException e) {
-			results = results.concat("ERROR: An error occured while parsing query results\n");
-			results = results.concat(e + "\n");
-			return results;
-		}
+	private String productid_from_name(String name){
+		String toReturn = "";
 		
+		// Define the query
+		String query = 
+				  "SELECT ProductID, Name "
+				+ "FROM product "
+				+ "WHERE NAME LIKE \"%" + name + "%\";";
 		
-		return results;
+		// Make the query, parse it, and return the results
+		toReturn = toReturn.concat(parse_ResultSet(jdbc.query(query)));
+		return toReturn;
 	}
+	
+	private String productid_from_description(String description){
+		String toReturn = "";
+		
+		// Define the query
+		String query = 
+				  "SELECT product.ProductID, product.Name, productdescription.Description" + 
+				  " FROM productdescription" + 
+				  "	INNER JOIN productmodelproductdescriptionculture" + 
+				  "	ON productmodelproductdescriptionculture.ProductDescriptionID=productdescription.ProductDescriptionID" + 
+				  "	INNER JOIN product" + 
+				  "	ON product.ProductModelID=productmodelproductdescriptionculture.ProductModelID" + 
+				  " WHERE productdescription.Description LIKE \"%" + description + "%\";";
+		
+		// Make the query, parse it, and return the results
+		toReturn = toReturn.concat(parse_ResultSet(jdbc.query(query)));
+		return toReturn;
+	}
+	
+	
+	private String locationid_from_name(String name){
+		String toReturn = "";
+		
+		// Define the query
+		String query = 
+				  " SELECT LocationID, Name" + 
+				  " FROM location" + 
+				  " WHERE NAME LIKE \"%" + name + "%\";";
+		
+		// Make the query, parse it, and return the results
+		toReturn = toReturn.concat(parse_ResultSet(jdbc.query(query)));
+		return toReturn;
+	}
+	
+	
 }
