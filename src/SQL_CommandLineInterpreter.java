@@ -334,6 +334,15 @@ public class SQL_CommandLineInterpreter {
 		// TODO Code from Alex
 		// All results to be shown to the user should be appended to toReturn in the following format
 		// toReturn = toReturn.concat(SomeStringToRreturn);
+		if (!check_for_table(table)){
+			toReturn = toReturn.concat("Error: Table \"" + table + "\" not found in database.");
+			return toReturn;
+		}
+		if (!check_for_column(table,column)){
+			toReturn = toReturn.concat("Error: Column \"" + column + "\" not found in Table \"" + table + "\".");
+			return toReturn;
+		}
+		
 		try {
 			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
 			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
@@ -514,5 +523,54 @@ public class SQL_CommandLineInterpreter {
 		return toReturn;
 	}
 	
+	private boolean check_for_table(String table){
+		//A simple function to check if the table is in the database
+		try {
+			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  
+			  while(tableList.next()){//check if the given table name was in the list of tables
+				  if (tableList.getString("TABLE_NAME").equals(table)){
+					  return true;
+				  }
+			  }
+			  
+			   //deallocate resources used
+			   tableList.close();
+			   
+			  //if the table is not in the database
+			  return false;      
+	   }catch(SQLException se){
+		   //not sure what to put here
+		   return false;
+	   }
+	}
 	
+	private boolean check_for_column(String table, String column){
+		//A simple function to check the column is in the table
+		try {
+			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  
+			  String sql = "USE adventureworks;";
+			  ResultSet rs = jdbc.query(sql);
+		      sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table + "';";
+		      rs = jdbc.query(sql);
+			   while(rs.next()){
+				   if(rs.getString("COLUMN_NAME").equals(column)){
+					   return true;
+				   }
+			   }
+			  
+			   //deallocate resources used
+			   tableList.close();
+			   rs.close();
+			   
+			  //if the column is not in the database
+			  return false;      
+	   }catch(SQLException se){
+		   //not sure what to put here
+		   return false;
+	   }
+	}
 }
