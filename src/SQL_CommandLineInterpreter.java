@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 // Utility class which interprets command line input and makes queries to SQL_JDBC
 public class SQL_CommandLineInterpreter {
@@ -115,7 +117,14 @@ public class SQL_CommandLineInterpreter {
 
 				results = results.concat(locationid_from_name(name));
 			}
-		
+		} else if (tokens[0].startsWith("jdb-stat")) {
+			if (tokens.length < 3) {
+				results = results.concat("ERROR: Syntax needs to follow:\njdb-stat <table|viewname> <column>\n");
+				return results;
+			} else {
+				results = results.concat(stat(tokens[1],tokens[2]));
+			}
+			
 			
 		// Catch invalid "jdb-" type command
 		} else if (tokens[0].startsWith("jdb-")) {
@@ -325,7 +334,87 @@ public class SQL_CommandLineInterpreter {
 		// TODO Code from Alex
 		// All results to be shown to the user should be appended to toReturn in the following format
 		// toReturn = toReturn.concat(SomeStringToRreturn);
-		
+		try {
+			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  
+			  String sql = "USE adventureworks;";
+			  ResultSet rs = jdbc.query(sql);
+		      sql = "SELECT " + column + " FROM " + table + ";";
+		      rs = jdbc.query(sql);
+		      //query gets the column of data we want
+		      ArrayList<Double> results = new ArrayList<Double>(0);//using list because we do not know how many data point we have
+			   while(rs.next()){
+				   results.add(rs.getDouble(column));
+			   }
+			   //do not need this because the data base throws an error when it cannot find table or column 
+			   if (results.size() == 0){toReturn = toReturn.concat("Column " + column + "not found in table " + table); return toReturn;}
+			   Double sum=0.0;
+			   for (Double num : results) {
+			        sum += num;
+			   }
+			   double mean = sum.doubleValue() / results.size();
+			   Collections.sort(results);
+			   double median;
+			   if (results.size() % 2 == 0)
+			       median = ((double)results.get(results.size()/2) + (double)results.get(results.size()/2-1))/2;
+			   else
+			       median = (double) results.get(results.size()/2);
+			   double max = Collections.max(results);
+			   double min = Collections.min(results);
+			   toReturn = toReturn.concat("Stats form " + table + " from " + column + ":\n");
+			   toReturn = toReturn.concat("MAX: " + max + "\n");
+			   toReturn = toReturn.concat("MIN: " + min + "\n");
+			   toReturn = toReturn.concat("MEAN: " + mean + "\n");
+			   toReturn = toReturn.concat("MEDIAN: " + median + "\n");
+			   
+			   //creating histogram with 5 buckets
+			   int[] hist = {0,0,0,0,0};
+			   int gap = (int)((max - min)/5.0);//how wide each bucket is
+			   //starting number of each bucket
+			   int b1 = gap+(int)(min);
+			   int b2 = gap+b1;
+			   int b3 = gap+b2;
+			   int b4 = gap+b3;
+			   //filling buckets
+			   for (Double num : results){
+				   if(num < b1)hist[0]++;
+				   else if(num < b2)hist[1]++;
+				   else if(num < b3)hist[2]++;
+				   else if(num < b4)hist[3]++;
+				   else hist[4]++;
+			   }
+			  int bucketmax = 0;//finding the bucket max to scale x-axis
+			  for (int num : hist){
+				  if (num > bucketmax)bucketmax = num;
+			  }
+			  bucketmax = bucketmax + (bucketmax/5);//add a little space on the end
+			  int bucketspace = bucketmax/5;
+			  int starValue = bucketspace/2-1;//value of each star printed
+			  toReturn = toReturn + String.format("%7s","");//space given to write y-axis
+			  toReturn = toReturn + String.format("0_%d_%d_%d_%d_%d\n",bucketspace,bucketspace*2,bucketspace*3,bucketspace*4,bucketmax);
+			  //printing each bucket
+			  toReturn = toReturn + String.format("%7s",(int)min + "-" + b1 + "|");
+			  for(int i=0; i<hist[0]/starValue+1; i++){toReturn = toReturn + String.format("*");}
+			  toReturn = toReturn + String.format("%n%7s",b1 + "-" + b2 + "|");
+			  for(int i=0; i<hist[1]/starValue+1; i++){toReturn = toReturn + String.format("*");}
+			  toReturn = toReturn + String.format("%n%7s",b2 + "-" + b3 + "|");
+			  for(int i=0; i<hist[2]/starValue+1; i++){toReturn = toReturn + String.format("*");}
+			  toReturn = toReturn + String.format("%n%7s",b3 + "-" + b4 + "|");
+			  for(int i=0; i<hist[3]/starValue+1; i++){toReturn = toReturn + String.format("*");}
+			  toReturn = toReturn + String.format("%n%7s",b4 + "-" + (int)max + "|");
+			  for(int i=0; i<hist[4]/starValue+1; i++){toReturn = toReturn + String.format("*");}
+			  toReturn = toReturn + String.format("\n");
+			  
+			   //deallocate resources used
+			   tableList.close();
+			   rs.close();
+			   	           
+	   }catch(SQLException se){
+		   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-stat for table " + table + "and  for column" + column + "\n");
+		   toReturn = toReturn.concat("Error: " + se + "\n");
+		   return toReturn;
+	   }
 		
 		return toReturn;
 	}
