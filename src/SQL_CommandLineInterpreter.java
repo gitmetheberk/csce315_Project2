@@ -1,4 +1,7 @@
 import java.sql.*;
+import java.util.Queue;
+import java.util.LinkedList; 
+import java.util.ArrayList;
 
 // Utility class which interprets command line input and makes queries to SQL_JDBC
 public class SQL_CommandLineInterpreter {
@@ -27,7 +30,7 @@ public class SQL_CommandLineInterpreter {
 		String[] tokens = input.split(" ");
 		
 		// if/else block to check for custom commands, else pass raw query
-		if (tokens[0].equals("jdb-show-related-tables")) {
+		if (tokens[0].equalsIgnoreCase("jdb-show-related-tables")) {
 			if (tokens.length < 2) {
 				results = results.concat("ERROR: No table name provided after jdb-show-related-tables\n");
 				return results;
@@ -35,10 +38,10 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(show_related_tables(tokens[1]));
 			}
 			
-		} else if (tokens[0].equals("jdb-show-all-primary-keys")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-show-all-primary-keys")) {
 			results = results.concat(show_all_primary_keys());
 			
-		} else if (tokens[0].equals("jdb-find-column")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-find-column")) {
 			if (tokens.length < 2) {
 				results = results.concat("ERROR: No column name provided after jdb-find-column\n");
 				return results;
@@ -46,7 +49,7 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(find_column(tokens[1]));
 			}
 			
-		} else if (tokens[0].equals("jdb-search-path")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-search-path")) {
 			if (tokens.length < 3) {
 				results = results.concat("ERROR: Less than 2 table names were provided after jdb-search-path\n");
 				return results;
@@ -54,15 +57,15 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(search_path(tokens[1], tokens[2]));
 			}
 			
-		} else if (tokens[0].equals("jdb-search-and-join")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-search-and-join")) {
 			if (tokens.length < 3) {
 				results = results.concat("ERROR: Less than 2 table names were provided after jdb-search-and-join\n");
 				return results;
 			} else {
-				results = results.concat(search_path(tokens[1], tokens[2]));
+				results = results.concat(search_and_join(tokens[1], tokens[2]));
 			}
 			
-		} else if (tokens[0].equals("jdb-get-view")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-get-view")) {
 			if (tokens.length < 3) {
 				results = results.concat("ERROR: View name or SQL query not provided after jdb-get-view\n");
 				return results;
@@ -71,16 +74,16 @@ public class SQL_CommandLineInterpreter {
 				String query = "";
 				query = input.replace(tokens[0] + " " + tokens[1] + " ", "");
 
-				results = results.concat(search_path(tokens[1], query));
+				results = results.concat(get_view(tokens[1], query));
 			}
 			
-		} else if (tokens[0].equals("jdb-show-all-tables")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-show-all-tables")) {
 			results = results.concat(show_all_tables());
 			
-		} else if (tokens[0].equals("jdb-show-all-columns")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-show-all-columns")) {
 			results = results.concat(show_all_columns());
 			
-		} else if (tokens[0].startsWith("jdb-productid-from-name")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-productid-from-name")) {
 			if (tokens.length < 2) {
 				results = results.concat("ERROR: Name missing after jdb-productid-from-name\n");
 				return results;
@@ -92,7 +95,7 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(productid_from_name(name));
 			}
 			
-		} else if (tokens[0].startsWith("jdb-productid-from-description")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-productid-from-description")) {
 			if (tokens.length < 2) {
 				results = results.concat("ERROR: Description missing after jdb-productid-from-description\n");
 				return results;
@@ -104,7 +107,7 @@ public class SQL_CommandLineInterpreter {
 				results = results.concat(productid_from_description(desc));
 			}
 			
-		} else if (tokens[0].startsWith("jdb-locationid-from-name")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-locationid-from-name")) {
 			if (tokens.length < 2) {
 				results = results.concat("ERROR: Name missing after jdb-locationid-from-name\n");
 				return results;
@@ -118,7 +121,7 @@ public class SQL_CommandLineInterpreter {
 		
 			
 		// Catch invalid "jdb-" type command
-		} else if (tokens[0].startsWith("jdb-")) {
+		} else if (tokens[0].toLowerCase().startsWith("jdb-")) {
 			results = results.concat("ERROR: Invalid command\n");
 			return results;
 			
@@ -168,6 +171,9 @@ public class SQL_CommandLineInterpreter {
 						if (columnValue == null) {
 							continue;
 						}
+						
+						//System.out.println("VAL: " + columnValue);
+						
 						results = results.concat(columnValue);
 					}
 					results = results.concat("\n");
@@ -286,24 +292,452 @@ public class SQL_CommandLineInterpreter {
 	   return toReturn;
 	}
 	
+	// This is quite possibly one of the most inefficient functions I've ever written
 	private String search_path(String t1, String t2){
 		String toReturn = "";
+
+		// Check t1 != t2
+		if (t1.equals(t2)) {
+			toReturn = toReturn.concat("ERROR: table1 = table2");
+			return toReturn;
+		}
 		
-		// TODO Code from Matthew
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
+		// Queue to hold tables to be processed
+		Queue<TableNode> tableQ = new LinkedList<>();
 		
+		// Temporary queue to hold nodes to be processed while working through tableQ
+		Queue<TableNode> tempQ = new LinkedList<>();
+		
+		// Hold the path to the current node from the original table
+		ArrayList<String> path = new ArrayList<String>();
+		
+		// Hold all nodes
+		ArrayList<TableNode> nodes = new ArrayList<TableNode>();
+		
+		// Process the first node outside of the while loop so there is 1 node to draw from
+		
+		TableNode firstNode = new TableNode(t1, path);
+		tableQ.add(firstNode);
+		nodes.add(firstNode);
+		
+		// --------------------------------------------------------------------------------------
+		
+		
+		boolean breakBool = true;
+		boolean foundBool = false;
+		TableNode workingTable;
+		while(breakBool) {
+			// Run while queue for tables isn't empty
+			while(!tableQ.isEmpty()) {
+				// Expect workingTable to be a node without columns assigned
+				workingTable = tableQ.remove();
+
+				// Query the database for the columns of this table
+				String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + workingTable.getName() + "\";";
+				ResultSet rs = jdbc.query(query_columns);
+				
+				ArrayList<String> cols_of_node = new ArrayList<String>();
+				
+				try {
+					// Loop through the results, add the columns to the array list
+					while(rs.next()) {
+						String col = rs.getString("COLUMN_NAME");
+						
+						// Only add columns that end in ID, if not ending in ID, not a true matching column
+						if (col.endsWith("ID")){
+							cols_of_node.add(col);
+						}
+					}
+				} catch (SQLException e) {
+					toReturn = toReturn.concat("ERROR: An error occured while processing jdb-search-path\n");
+					toReturn = toReturn.concat("Error: " + e + "\n");
+					return toReturn;
+				}
+				
+				// Set the columns for this node
+				workingTable.setColumns(cols_of_node);
+				
+				// Check for other tables that share 1 or more of this tables ID columns
+				Queue<String> table_names = new LinkedList<>();
+				for (String column : cols_of_node) {
+					String query_tables = "Select distinct TABLE_NAME From INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME=\"" + column + "\";";
+					ResultSet tables = jdbc.query(query_tables);
+					
+					try {
+						// Loop through the results, add the columns to the table_name queue
+						while(tables.next()) {
+							String table = tables.getString("TABLE_NAME");
+							
+							// If the table is not this table, add to the queue
+							if (!table.equals(workingTable.getName())){
+								table_names.add(table);
+							}
+							
+							
+						}
+					} catch (SQLException e) {
+						toReturn = toReturn.concat("ERROR: An error occured while processing jdb-search-path\n");
+						toReturn = toReturn.concat("Error: " + e + "\n");
+						return toReturn;
+					}
+				}
+				
+				//TODO Create nodes with correct path information and then add to tempQ
+				
+				// Setup correct path information
+				path = new ArrayList<String>(workingTable.getPath_to());
+				path.add(workingTable.getName());
+				
+				// Loop through the queue
+				String tn;
+				while(!table_names.isEmpty()) {
+					tn = table_names.remove();
+					
+					// Check if tn is the end point table
+					if (tn.equals(t2)) {
+						breakBool = false;
+						foundBool = true;
+						path.add(tn);
+						break;
+					}
+					
+					// Check if tn aleady has a node
+					boolean exists = false;
+					for (TableNode n : nodes) {
+						// If table already visited (aka in nodes) continue
+						if (n.getName().equals(tn)) {
+							exists = true;
+							break;
+						} 
+					}
+					
+					// Check if the table was found in the for loop
+					if (exists) {
+						continue;
+					}
+					
+					// Create a new empty node with the correct path and add it to two locations (should be shared...)
+					TableNode node = new TableNode(tn, path);
+					tempQ.add(node);
+					nodes.add(node);
+				
+				
+				}
+				
+				if (foundBool) {
+					breakBool = false;
+					break;
+				}
+
+				
+			} // End !tableQ.isEmpty() loop
+			
+			// Check if tempQ is empty, if so, and not found, no path
+			if (tempQ.isEmpty() && !foundBool) {
+				breakBool = false;
+				break;
+			}
+			
+			// Assign the tempQ to the tableQ and continue
+			tableQ = new LinkedList<>(tempQ);
+			tempQ.clear();
+		} // End outer while
+		
+		// Check if a path was found
+		if (foundBool) {
+			toReturn = toReturn.concat("PATH:\n");
+			
+			// Add the results to the toReturn string
+			boolean first = true;
+			for (String s : path) {
+				if (first) {
+					first = false;
+					toReturn = toReturn.concat(s);
+					
+				} else {
+					toReturn = toReturn.concat(" -> " + s);
+				}
+			}
+			toReturn = toReturn.concat("\n");
+		} else {
+			toReturn = toReturn.concat("WARNING: No path was found between " + t1 + " and " + t2 + "\n");
+		}
 		
 		return toReturn;
 	}
 	
 	private String search_and_join(String t1, String t2){
 		String toReturn = "";
+
+		// Check t1 != t2
+		if (t1.equals(t2)) {
+			toReturn = toReturn.concat("ERROR: table1 = table2");
+			return toReturn;
+		}
 		
-		// TODO Code from Matthew
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
+		// Queue to hold tables to be processed
+		Queue<TableNode> tableQ = new LinkedList<>();
 		
+		// Temporary queue to hold nodes to be processed while working through tableQ
+		Queue<TableNode> tempQ = new LinkedList<>();
+		
+		// Hold the path to the current node from the original table
+		ArrayList<String> path = new ArrayList<String>();
+		
+		// Hold all nodes
+		ArrayList<TableNode> nodes = new ArrayList<TableNode>();
+		
+		// Process the first node outside of the while loop so there is 1 node to draw from
+		
+		TableNode firstNode = new TableNode(t1, path);
+		tableQ.add(firstNode);
+		nodes.add(firstNode);
+		
+		// --------------------------------------------------------------------------------------
+		
+		
+		boolean breakBool = true;
+		boolean foundBool = false;
+		TableNode workingTable;
+		while(breakBool) {
+			// Run while queue for tables isn't empty
+			while(!tableQ.isEmpty()) {
+				// Expect workingTable to be a node without columns assigned
+				workingTable = tableQ.remove();
+
+				// Query the database for the columns of this table
+				String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + workingTable.getName() + "\";";
+				ResultSet rs = jdbc.query(query_columns);
+				
+				ArrayList<String> cols_of_node = new ArrayList<String>();
+				
+				try {
+					// Loop through the results, add the columns to the array list
+					while(rs.next()) {
+						String col = rs.getString("COLUMN_NAME");
+						
+						// Only add columns that end in ID, if not ending in ID, not a true matching column
+						if (col.endsWith("ID")){
+							cols_of_node.add(col);
+						}
+					}
+				} catch (SQLException e) {
+					toReturn = toReturn.concat("ERROR: An error occured while processing jdb-search-and-join\n");
+					toReturn = toReturn.concat("Error: " + e + "\n");
+					return toReturn;
+				}
+				
+				// Set the columns for this node
+				workingTable.setColumns(cols_of_node);
+				
+				// Check for other tables that share 1 or more of this tables ID columns
+				Queue<String> table_names = new LinkedList<>();
+				for (String column : cols_of_node) {
+					String query_tables = "Select distinct TABLE_NAME From INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME=\"" + column + "\";";
+					ResultSet tables = jdbc.query(query_tables);
+					
+					try {
+						// Loop through the results, add the columns to the table_name queue
+						while(tables.next()) {
+							String table = tables.getString("TABLE_NAME");
+							
+							// If the table is not this table, add to the queue
+							if (!table.equals(workingTable.getName())){
+								table_names.add(table);
+							}
+							
+							
+						}
+					} catch (SQLException e) {
+						toReturn = toReturn.concat("ERROR: An error occured while processing jdb-search-and-join\n");
+						toReturn = toReturn.concat("Error: " + e + "\n");
+						return toReturn;
+					}
+				}
+				
+				// Setup correct path information
+				path = new ArrayList<String>(workingTable.getPath_to());
+				path.add(workingTable.getName());
+				
+				// Loop through the queue
+				String tn;
+				while(!table_names.isEmpty()) {
+					tn = table_names.remove();
+					
+					// Check if tn is the end point table
+					if (tn.equals(t2)) {
+						breakBool = false;
+						foundBool = true;
+						path.add(tn);
+						break;
+					}
+					
+					// Check if tn aleady has a node
+					boolean exists = false;
+					for (TableNode n : nodes) {
+						// If table already visited (aka in nodes) continue
+						if (n.getName().equals(tn)) {
+							exists = true;
+							break;
+						} 
+					}
+					
+					// Check if the table was found in the for loop
+					if (exists) {
+						continue;
+					}
+					
+					// Create a new empty node with the correct path and add it to two locations (should be shared...)
+					TableNode node = new TableNode(tn, path);
+					tempQ.add(node);
+					nodes.add(node);
+				
+				
+				}
+				
+				if (foundBool) {
+					breakBool = false;
+					break;
+				}
+
+				
+			} // End !tableQ.isEmpty() loop
+			
+			// Check if tempQ is empty, if so, and not found, no path
+			if (tempQ.isEmpty() && !foundBool) {
+				breakBool = false;
+				break;
+			}
+			
+			// Assign the tempQ to the tableQ and continue
+			tableQ = new LinkedList<>(tempQ);
+			tempQ.clear();
+		} // End outer while
+		
+		// Check if a path was found
+		if (foundBool) {
+			toReturn = toReturn.concat("PATH:\n");
+			
+			// Add the results to the toReturn string
+			boolean first = true;
+			for (String s : path) {
+				if (first) {
+					first = false;
+					toReturn = toReturn.concat(s);
+					
+				} else {
+					toReturn = toReturn.concat(" -> " + s);
+				}
+			}
+			toReturn = toReturn.concat("\n");
+			
+			
+			// Step 1: Create node for the final table (path isn't important at this point)
+			TableNode lastNode = new TableNode(t2, null);
+			
+			// Code from main while loops:
+			String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + lastNode.getName() + "\";";
+			ResultSet rs = jdbc.query(query_columns);
+			
+			ArrayList<String> cols_of_node = new ArrayList<String>();
+			try {
+				// Loop through the results, add the columns to the array list
+				while(rs.next()) {
+					String col = rs.getString("COLUMN_NAME");
+					
+					// Only add columns that end in ID, if not ending in ID, not a true matching column
+					if (col.endsWith("ID")){
+						cols_of_node.add(col);
+					}
+				}
+			} catch (SQLException e) {
+				toReturn = toReturn.concat("ERROR: An error occured while processing jdb-search-and-join\n");
+				toReturn = toReturn.concat("Error: " + e + "\n");
+				return toReturn;
+			}
+			
+			// Set the columns for this node
+			lastNode.setColumns(cols_of_node);
+			nodes.add(lastNode);
+			
+			// Step 2: Resolve nodes along path for actual TableNode in nodes (time to get n^2 inefficient!)
+			ArrayList<TableNode> pathNodes = new ArrayList<TableNode>();
+			
+			// Resolve each table name in the path to a tableNode
+			// Technically this could be slightly more efficient by not looking for firstNode and lastNode, but it's a minor improvement
+			for (String name : path) {
+				for (TableNode n : nodes) {
+					if (name.equals(n.getName())) {
+						pathNodes.add(n);
+					}
+				}
+			}
+			
+			// Step 3: Find the matching columns (oh yeah, more inefficient code, lots more!)
+			ArrayList<String> matchingColumns = new ArrayList<String>();
+			
+			boolean match;
+			for (TableNode n : pathNodes) {
+				// Check for last node in pathNodes, if so, break
+				if (n == pathNodes.get(pathNodes.size() - 1)) {
+					break;
+				}
+				
+				// Grab the columns
+				ArrayList<String> colsLeft = n.getColumns();
+				ArrayList<String> colsRight = pathNodes.get(pathNodes.indexOf(n) + 1).getColumns();
+				
+				// Find the matching column
+				match = false;
+				for (String colL : colsLeft) {
+					for (String colR : colsRight) {
+						if (colL.equals(colR)) {
+							matchingColumns.add(colL);
+							match = true;
+							break;
+						}
+					}
+					if (match) {
+						break;
+					}
+				}
+				if (match) {
+					continue;
+				}
+			}
+			
+			// Step 4: Write the SQL query
+			String query = "SELECT * FROM " + t1 + " ";
+			
+			// Check for a direct link
+			if (matchingColumns.size() == 1) {
+				query = query.concat("INNER JOIN " + pathNodes.get(1).getName() + 
+									 " ON " + pathNodes.get(1).getName() + "." + matchingColumns.get(0) +
+									 "=" + pathNodes.get(0).getName() + "." + matchingColumns.get(0));
+				
+			} else {
+				//System.out.println("LEN:" + pathNodes.size());
+				for (int i = 1; i <= matchingColumns.size(); i++) {
+					query = query.concat("INNER JOIN " + pathNodes.get(i).getName() + 
+										 " ON " + pathNodes.get(i).getName() + "." + matchingColumns.get(i - 1) + 
+										 "=" + pathNodes.get(i - 1).getName() + "." + matchingColumns.get(i - 1) + " ");
+	
+				}
+			}
+			
+			query = query.concat(";");
+			
+			// Step 5: Execute the query and append to the return
+			System.out.println("QUERY: " + query);
+			
+			ResultSet joinResults = jdbc.query(query);
+			String toAppend = parse_ResultSet(joinResults);
+			toReturn = toReturn.concat(toAppend);
+			
+	
+		} else {
+			toReturn = toReturn.concat("WARNING: No path was found between " + t1 + " and " + t2 + "\n");
+		}
 		
 		return toReturn;
 	}
@@ -362,7 +796,7 @@ public class SQL_CommandLineInterpreter {
 			while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
 				   
 				 String tableName = tableList.getString("TABLE_NAME");
-				 toReturn += "Columns for the " + tableName + " table:\n";
+				 toReturn += "Columns for table \"" + tableName + "\":\n";
 				 ResultSet columns = metaData.getColumns("adventureworks", null, tableName, null);
 				 while(columns.next()) {
 					 toReturn += columns.getString("COLUMN_NAME") + "\n";
