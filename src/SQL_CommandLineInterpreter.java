@@ -232,7 +232,7 @@ public class SQL_CommandLineInterpreter {
 					 //System.out.println("whileloop running");
 					 String Column_name = columns.getString("COLUMN_NAME");
 					 for (int i=0; i<primary.size();i++) {
-						 System.out.println("forloop running");
+						 //System.out.println("forloop running");
 						 //System.out.println(Column_name);
 						 //System.out.println(primary.get(i));
 						 if (Column_name.equals(primary.get(i))) {
