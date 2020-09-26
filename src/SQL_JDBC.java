@@ -71,6 +71,33 @@ public class SQL_JDBC {
 		
 	}
 	
+	// Function that executes an update to the DB (used for views)
+	public int update(String updateQuery) {
+		if (!connected) {
+			return -1;
+		}
+		
+		// Error handling surrounding queries
+		try {
+			// Initialize a statement from the connection
+			Statement st = connection.createStatement();
+			
+			// Execute the update
+			int returnVal = st.executeUpdate(updateQuery);
+			
+			// Return the int value from executeUpdate
+			return returnVal;
+			
+		} catch (SQLException e) {
+			System.out.println("ERROR: SQL EXCEPTION IN SQL_JDBC.update()");
+			System.out.println("UPDATE: " + updateQuery);
+			System.out.println("Error: " + e);
+			//System.out.println(e.getStackTrace());
+			
+			return -1;
+		}
+	}
+	
 	// Returns a DatabaseMetaData object for the connected DB
 	public DatabaseMetaData get_DatabaseMetaData() {
 		DatabaseMetaData md = null;
