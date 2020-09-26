@@ -202,13 +202,55 @@ public class SQL_CommandLineInterpreter {
 	}
 
 	private String show_related_tables(String table){
+
 		String toReturn = "";
-
-		// TODO Code from Zhengnan
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
-
-
+		//System.out.println("Functional Called");
+		
+		//1.use table name to access it's primary kyes.
+		//2.print out tables that contain that primary keys.
+		//toReturn = toReturn.concat(SomeStringToRreturn);
+		try {
+		DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+		ResultSet keyList = metaData.getPrimaryKeys("adventureworks", null, table_name);
+		
+		String sql = "USE adventureworks;";
+		jdbc.query(sql);
+		
+		Vector<String> primary = new Vector<String>();
+		 
+		while (keyList.next()) { //it needs to be a while loop because each row contains data about each primary key (there could possibly be multiple primary keys)
+			 primary.add(keyList.getString("COLUMN_NAME"));
+		 }		 
+		ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"});
+		while (tableList.next()) {
+			//System.out.println("outerwhileloop running");
+			 String tableName = tableList.getString("TABLE_NAME");
+			 if (!tableName.equals(table_name)) {
+				 //System.out.println("inIF running");
+				 ResultSet columns = metaData.getColumns("adventureworks", null, tableName, null);
+				 while (columns.next()) {
+					 //System.out.println("whileloop running");
+					 String Column_name = columns.getString("COLUMN_NAME");
+					 for (int i=0; i<primary.size();i++) {
+						 System.out.println("forloop running");
+						 //System.out.println(Column_name);
+						 //System.out.println(primary.get(i));
+						 if (Column_name.equals(primary.get(i))) {
+							 toReturn += tableName+"\n";
+							 System.out.println(tableName+"\n");
+						 }
+					 }
+				 }
+			 }
+			 
+		 }
+		 tableList.close();
+		}
+		catch(SQLException se){
+			   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-show-related-tables\n");
+			   toReturn = toReturn.concat("Error: " + se + "\n");
+			   return toReturn;
+		  }
 		return toReturn;
 	}
 
