@@ -217,13 +217,15 @@ public class SQL_CommandLineInterpreter {
 		
 		try {
 			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg 
+specifies database name, last arg indicates we want the entire list of tables
 			  
 			  String sql = "USE adventureworks;";
 			  jdbc.query(sql);
 			   
 			  boolean hasPrimaryKey;
-			  while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+			  while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the 
+"TABLE_NAME" key
 				   
 				  String tableName = tableList.getString("TABLE_NAME"); 
 				  ResultSet keyList = metaData.getPrimaryKeys("adventureworks", null, tableName);
@@ -231,7 +233,8 @@ public class SQL_CommandLineInterpreter {
 				  toReturn += "(" + tableName + ", ";
 
 				  hasPrimaryKey = false;
-				  while (keyList.next()) { //it needs to be a while loop because each row contains data about each primary key (there could possibly be multiple primary keys)
+				  while (keyList.next()) { //it needs to be a while loop because each row contains data about each primary key 
+(there could possibly be multiple primary keys)
 					  hasPrimaryKey = true;
 					  toReturn += keyList.getString("COLUMN_NAME") + ", ";
 				  }
@@ -261,7 +264,8 @@ public class SQL_CommandLineInterpreter {
 		
 		try {
 			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg 
+specifies database name, last arg indicates we want the entire list of tables
 			  
 			  String sql = "USE adventureworks;";
 			  ResultSet rs = jdbc.query(sql);
@@ -269,14 +273,17 @@ public class SQL_CommandLineInterpreter {
 			  // Flag to provide the user with a message if no tables found
 			  boolean anyFound = false;
 			  
-			  while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+			  while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the 
+"TABLE_NAME" key
 				  String tableName = tableList.getString("TABLE_NAME"); 
 				  sql = "SHOW COLUMNS FROM " + tableName + " LIKE '" + column + "'";
 				  rs = jdbc.query(sql);
 
-				  if(rs.next()) { //if rs.next() returns false, then there are no columns for the table that match the column passed into the function
+				  if(rs.next()) { //if rs.next() returns false, then there are no columns for the table that match the column 
+passed into the function
 					  anyFound = true;
-					  toReturn += tableName + "\n"; //storing in vector for now , just in case we need to do something with the tables that contain the column later
+					  toReturn += tableName + "\n"; //storing in vector for now , just in case we need to do something with the 
+tables that contain the column later
 				  }
 		    	  
 			   }
@@ -341,7 +348,8 @@ public class SQL_CommandLineInterpreter {
 				workingTable = tableQ.remove();
 
 				// Query the database for the columns of this table
-				String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + workingTable.getName() + "\";";
+				String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + 
+workingTable.getName() + "\";";
 				ResultSet rs = jdbc.query(query_columns);
 				
 				ArrayList<String> cols_of_node = new ArrayList<String>();
@@ -368,7 +376,8 @@ public class SQL_CommandLineInterpreter {
 				// Check for other tables that share 1 or more of this tables ID columns
 				Queue<String> table_names = new LinkedList<>();
 				for (String column : cols_of_node) {
-					String query_tables = "Select distinct TABLE_NAME From INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME=\"" + column + "\";";
+					String query_tables = "Select distinct TABLE_NAME From INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME=\"" + 
+column + "\";";
 					ResultSet tables = jdbc.query(query_tables);
 					
 					try {
@@ -514,7 +523,8 @@ public class SQL_CommandLineInterpreter {
 				workingTable = tableQ.remove();
 
 				// Query the database for the columns of this table
-				String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + workingTable.getName() + "\";";
+				String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + 
+workingTable.getName() + "\";";
 				ResultSet rs = jdbc.query(query_columns);
 				
 				ArrayList<String> cols_of_node = new ArrayList<String>();
@@ -541,7 +551,8 @@ public class SQL_CommandLineInterpreter {
 				// Check for other tables that share 1 or more of this tables ID columns
 				Queue<String> table_names = new LinkedList<>();
 				for (String column : cols_of_node) {
-					String query_tables = "Select distinct TABLE_NAME From INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME=\"" + column + "\";";
+					String query_tables = "Select distinct TABLE_NAME From INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME=\"" + 
+column + "\";";
 					ResultSet tables = jdbc.query(query_tables);
 					
 					try {
@@ -644,7 +655,8 @@ public class SQL_CommandLineInterpreter {
 			TableNode lastNode = new TableNode(t2, null);
 			
 			// Code from main while loops:
-			String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + lastNode.getName() + "\";";
+			String query_columns = "Select distinct COLUMN_NAME From INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=\"" + 
+lastNode.getName() + "\";";
 			ResultSet rs = jdbc.query(query_columns);
 			
 			ArrayList<String> cols_of_node = new ArrayList<String>();
@@ -672,7 +684,8 @@ public class SQL_CommandLineInterpreter {
 			ArrayList<TableNode> pathNodes = new ArrayList<TableNode>();
 			
 			// Resolve each table name in the path to a tableNode
-			// Technically this could be slightly more efficient by not looking for firstNode and lastNode, but it's a minor improvement
+			// Technically this could be slightly more efficient by not looking for firstNode and lastNode, but it's a minor 
+improvement
 			for (String name : path) {
 				for (TableNode n : nodes) {
 					if (name.equals(n.getName())) {
@@ -753,10 +766,17 @@ public class SQL_CommandLineInterpreter {
 	private String get_view(String view_name, String query){
 		String toReturn = "";
 		
-		// TODO Code from Nima
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
+				try {			
+			jdbc.update("CREATE VIEW " + view_name + " AS " + query);
+		}
+		catch(SQLException se){
+		   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-get-view for table " + table + "and  for 
+			column" + column + "\n");
+		   toReturn = toReturn.concat("Error: " + se + "\n");
+		   return toReturn;
+	   }
 		
+		toReturn =  view_name + " has been successfully created";
 		
 		return toReturn;
 	}
@@ -778,19 +798,22 @@ public class SQL_CommandLineInterpreter {
 		
 		try {
 			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg 
+specifies database name, last arg indicates we want the entire list of tables
 			  
 			  String sql = "USE adventureworks;";
 			  ResultSet rs = jdbc.query(sql);
 		      sql = "SELECT " + column + " FROM " + table + ";";
 		      rs = jdbc.query(sql);
 		      //query gets the column of data we want
-		      ArrayList<Double> results = new ArrayList<Double>(0);//using list because we do not know how many data point we have
+		      ArrayList<Double> results = new ArrayList<Double>(0);//using list because we do not know how many data point we 
+have
 			   while(rs.next()){
 				   results.add(rs.getDouble(column));
 			   }
 			   //do not need this because the data base throws an error when it cannot find table or column 
-			   if (results.size() == 0){toReturn = toReturn.concat("Column " + column + "not found in table " + table); return toReturn;}
+			   if (results.size() == 0){toReturn = toReturn.concat("Column " + column + "not found in table " + table); return 
+toReturn;}
 			   Double sum=0.0;
 			   for (Double num : results) {
 			        sum += num;
@@ -834,7 +857,8 @@ public class SQL_CommandLineInterpreter {
 			  int bucketspace = bucketmax/5;
 			  int starValue = bucketspace/2-1;//value of each star printed
 			  toReturn = toReturn + String.format("%7s","");//space given to write y-axis
-			  toReturn = toReturn + String.format("0_%d_%d_%d_%d_%d\n",bucketspace,bucketspace*2,bucketspace*3,bucketspace*4,bucketmax);
+			  toReturn = toReturn + 
+String.format("0_%d_%d_%d_%d_%d\n",bucketspace,bucketspace*2,bucketspace*3,bucketspace*4,bucketmax);
 			  //printing each bucket
 			  toReturn = toReturn + String.format("%7s",(int)min + "-" + b1 + "|");
 			  for(int i=0; i<hist[0]/starValue+1; i++){toReturn = toReturn + String.format("*");}
@@ -853,7 +877,8 @@ public class SQL_CommandLineInterpreter {
 			   rs.close();
 			   	           
 	   }catch(SQLException se){
-		   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-stat for table " + table + "and  for column" + column + "\n");
+		   toReturn = toReturn.concat("ERROR: An error occured while processing jdb-stat for table " + table + "and  for 
+column" + column + "\n");
 		   toReturn = toReturn.concat("Error: " + se + "\n");
 		   return toReturn;
 	   }
@@ -866,9 +891,11 @@ public class SQL_CommandLineInterpreter {
 		
 		try {
 			DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg 
+specifies database name, last arg indicates we want the entire list of tables
 			
-			while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+			while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the 
+"TABLE_NAME" key
 				   
 				 String tableName = tableList.getString("TABLE_NAME");
 				 toReturn += tableName + "\n";
@@ -888,9 +915,11 @@ public class SQL_CommandLineInterpreter {
 		
 		try {
 			DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg 
+specifies database name, last arg indicates we want the entire list of tables
 			
-			while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the "TABLE_NAME" key
+			while(tableList.next()) {//to get each table name, move the result set cursor down and access the value for the 
+"TABLE_NAME" key
 				   
 				 String tableName = tableList.getString("TABLE_NAME");
 				 toReturn += "Columns for table \"" + tableName + "\":\n";
@@ -960,7 +989,8 @@ public class SQL_CommandLineInterpreter {
 		//A simple function to check if the table is in the database
 		try {
 			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg 
+specifies database name, last arg indicates we want the entire list of tables
 			  
 			  while(tableList.next()){//check if the given table name was in the list of tables
 				  if (tableList.getString("TABLE_NAME").equals(table)){
@@ -983,7 +1013,8 @@ public class SQL_CommandLineInterpreter {
 		//A simple function to check the column is in the table
 		try {
 			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg 
+specifies database name, last arg indicates we want the entire list of tables
 			  
 			  String sql = "USE adventureworks;";
 			  ResultSet rs = jdbc.query(sql);
