@@ -3,6 +3,7 @@ import java.util.Queue;
 import java.util.LinkedList; 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Vector;
 
 // Utility class which interprets command line input and makes queries to SQL_JDBC
 public class SQL_CommandLineInterpreter {
@@ -29,6 +30,10 @@ public class SQL_CommandLineInterpreter {
 		
 		// Tokenize the input
 		String[] tokens = input.split(" ");
+		
+//		for (String s : tokens) {
+//			System.out.println("token:" + s);
+//		}
 		
 		// if/else block to check for custom commands, else pass raw query
 		if (tokens[0].equalsIgnoreCase("jdb-show-related-tables")) {
@@ -202,15 +207,58 @@ public class SQL_CommandLineInterpreter {
 	}
 	
 	private String show_related_tables(String table){
-		String toReturn = "";
-		
-		// TODO Code from Zhengnan
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
-		
-		
-		return toReturn;
-	}
+        String toReturn = "";
+        //System.out.println("Functional Called");
+        
+        //1.use table name to access it's primary kyes.
+        //2.print out tables that contain that primary keys.
+        //toReturn = toReturn.concat(SomeStringToRreturn);
+        try {
+        DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+        ResultSet keyList = metaData.getPrimaryKeys("adventureworks", null, table);
+        
+        String sql = "USE adventureworks;";
+        jdbc.query(sql);
+        
+        Vector<String> primary = new Vector<String>();
+        
+        while (keyList.next()) { //it needs to be a while loop because each row contains data about each primary key (there could possibly be multiple primary keys)
+             primary.add(keyList.getString("COLUMN_NAME"));
+         }        
+        ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"});
+        while (tableList.next()) {
+             String tableName = tableList.getString("TABLE_NAME");
+             
+             if (!tableName.equals(table)) {
+                 ResultSet columns = metaData.getColumns("adventureworks", null, tableName, null);
+                 
+                 while (columns.next()) {
+                     String Column_name = columns.getString("COLUMN_NAME");
+                     
+                     for (int i=0; i<primary.size();i++) {
+                         if (Column_name.equals(primary.get(i))) {
+                             toReturn += tableName+"\n";
+                         }
+                     }
+                 }
+             }
+            
+         }
+         tableList.close();
+        }
+        catch(SQLException se){
+               toReturn = toReturn.concat("ERROR: An error occured while processing jdb-show-related-tables\n");
+               toReturn = toReturn.concat("Error: " + se + "\n");
+               return toReturn;
+          }
+        
+        // Check if any tables were found, if not, notify the user
+        if (toReturn.isEmpty()) {
+        	toReturn = toReturn.concat("WARNING: No related tables found");
+        }
+        return toReturn;
+    }
+
 	
 	private String show_all_primary_keys(){
 		String toReturn = "";
@@ -750,16 +798,28 @@ public class SQL_CommandLineInterpreter {
 		return toReturn;
 	}
 	
-	private String get_view(String view_name, String query){
-		String toReturn = "";
-		
-		// TODO Code from Nima
-		// All results to be shown to the user should be appended to toReturn in the following format
-		// toReturn = toReturn.concat(SomeStringToRreturn);
-		
-		
-		return toReturn;
-	}
+    private String get_view(String view_name, String query){
+        String toReturn = "";
+
+        try {            
+            // executeUpdate returns an int which is returned, if -1 then error, else success
+        	int returnVal = jdbc.update("CREATE VIEW " + view_name + " AS " + query);
+        	if (returnVal == -1) {
+        		toReturn = toReturn.concat("ERROR: An error occured while processing jdb-get-view\n");
+                return toReturn;
+        	}
+            
+        }
+        catch(Exception e){
+            toReturn = toReturn.concat("ERROR: An error occured while processing jdb-get-view\n");
+            toReturn = toReturn.concat("Error: " + e + "\n");
+            return toReturn;
+        }
+
+        toReturn =  "View " + view_name + " has been successfully created";
+        return toReturn;
+    }
+
 	
 	private String stat(String table, String column){
 		String toReturn = "";
