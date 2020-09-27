@@ -40,6 +40,7 @@ public class SQL_JDBC {
 	public ResultSet query(String query) {
 		ResultSet rs = null;
 		if (!connected) {
+			System.out.println("ERROR: JDBC not connected to Database");
 			return rs;
 		}
 		

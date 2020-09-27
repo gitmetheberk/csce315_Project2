@@ -226,7 +226,12 @@ public class SQL_CommandLineInterpreter {
              primary.add(keyList.getString("COLUMN_NAME"));
          }        
         ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"});
+        
+        
+        boolean foundTable = false;
+        
         while (tableList.next()) {
+        	 foundTable = false;
              String tableName = tableList.getString("TABLE_NAME");
              
              if (!tableName.equals(table)) {
@@ -238,7 +243,12 @@ public class SQL_CommandLineInterpreter {
                      for (int i=0; i<primary.size();i++) {
                          if (Column_name.equals(primary.get(i))) {
                              toReturn += tableName+"\n";
+                             foundTable = true;
+                             break;
                          }
+                     }
+                     if (foundTable) {
+                    	 break;
                      }
                  }
              }
@@ -784,7 +794,7 @@ public class SQL_CommandLineInterpreter {
 			query = query.concat(";");
 			
 			// Step 5: Execute the query and append to the return
-			System.out.println("QUERY: " + query);
+			//System.out.println("QUERY: " + query);
 			
 			ResultSet joinResults = jdbc.query(query);
 			String toAppend = parse_ResultSet(joinResults);
@@ -800,10 +810,11 @@ public class SQL_CommandLineInterpreter {
 	
     private String get_view(String view_name, String query){
         String toReturn = "";
-
+        int returnVal;
+        
         try {            
             // executeUpdate returns an int which is returned, if -1 then error, else success
-        	int returnVal = jdbc.update("CREATE VIEW " + view_name + " AS " + query);
+        	returnVal = jdbc.update("CREATE VIEW " + view_name + " AS " + query);
         	if (returnVal == -1) {
         		toReturn = toReturn.concat("ERROR: An error occured while processing jdb-get-view\n");
                 return toReturn;
@@ -816,7 +827,8 @@ public class SQL_CommandLineInterpreter {
             return toReturn;
         }
 
-        toReturn =  "View " + view_name + " has been successfully created";
+        toReturn = "View " + view_name + " has been successfully created\n";
+        toReturn = returnVal + " rows changed\n";
         return toReturn;
     }
 
@@ -827,14 +839,14 @@ public class SQL_CommandLineInterpreter {
 		// TODO Code from Alex
 		// All results to be shown to the user should be appended to toReturn in the following format
 		// toReturn = toReturn.concat(SomeStringToRreturn);
-		if (!check_for_table(table)){
-			toReturn = toReturn.concat("Error: Table \"" + table + "\" not found in database.");
-			return toReturn;
-		}
-		if (!check_for_column(table,column)){
-			toReturn = toReturn.concat("Error: Column \"" + column + "\" not found in Table \"" + table + "\".");
-			return toReturn;
-		}
+//		if (!check_for_table(table)){
+//			toReturn = toReturn.concat("Error: Table \"" + table + "\" not found in database.");
+//			return toReturn;
+//		}
+//		if (!check_for_column(table,column)){
+//			toReturn = toReturn.concat("Error: Column \"" + column + "\" not found in Table \"" + table + "\".");
+//			return toReturn;
+//		}
 		
 		try {
 			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
@@ -844,6 +856,12 @@ public class SQL_CommandLineInterpreter {
 			  ResultSet rs = jdbc.query(sql);
 		      sql = "SELECT " + column + " FROM " + table + ";";
 		      rs = jdbc.query(sql);
+		      
+		      if (rs == null) {
+		    	  toReturn = toReturn.concat("ERROR: This table name does not have any rows or does not exist");
+		    	  return toReturn;
+		      }
+		      
 		      //query gets the column of data we want
 		      ArrayList<Double> results = new ArrayList<Double>(0);//using list because we do not know how many data point we have
 			   while(rs.next()){
@@ -1016,54 +1034,54 @@ public class SQL_CommandLineInterpreter {
 		return toReturn;
 	}
 	
-	private boolean check_for_table(String table){
-		//A simple function to check if the table is in the database
-		try {
-			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
-			  
-			  while(tableList.next()){//check if the given table name was in the list of tables
-				  if (tableList.getString("TABLE_NAME").equals(table)){
-					  return true;
-				  }
-			  }
-			  
-			   //deallocate resources used
-			   tableList.close();
-			   
-			  //if the table is not in the database
-			  return false;      
-	   }catch(SQLException se){
-		   //not sure what to put here
-		   return false;
-	   }
-	}
-	
-	private boolean check_for_column(String table, String column){
-		//A simple function to check the column is in the table
-		try {
-			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
-			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
-			  
-			  String sql = "USE adventureworks;";
-			  ResultSet rs = jdbc.query(sql);
-		      sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table + "';";
-		      rs = jdbc.query(sql);
-			   while(rs.next()){
-				   if(rs.getString("COLUMN_NAME").equals(column)){
-					   return true;
-				   }
-			   }
-			  
-			   //deallocate resources used
-			   tableList.close();
-			   rs.close();
-			   
-			  //if the column is not in the database
-			  return false;      
-	   }catch(SQLException se){
-		   //not sure what to put here
-		   return false;
-	   }
-	}
+//	private boolean check_for_table(String table){
+//		//A simple function to check if the table is in the database
+//		try {
+//			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+//			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+//			  
+//			  while(tableList.next()){//check if the given table name was in the list of tables
+//				  if (tableList.getString("TABLE_NAME").equals(table)){
+//					  return true;
+//				  }
+//			  }
+//			  
+//			   //deallocate resources used
+//			   tableList.close();
+//			   
+//			  //if the table is not in the database
+//			  return false;      
+//	   }catch(SQLException se){
+//		   //not sure what to put here
+//		   return false;
+//	   }
+//	}
+//	
+//	private boolean check_for_column(String table, String column){
+//		//A simple function to check the column is in the table
+//		try {
+//			  DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+//			  ResultSet tableList = metaData.getTables("adventureworks", null, null, new String[]{"TABLE"}); //first arg specifies database name, last arg indicates we want the entire list of tables
+//			  
+//			  String sql = "USE adventureworks;";
+//			  ResultSet rs = jdbc.query(sql);
+//		      sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table + "';";
+//		      rs = jdbc.query(sql);
+//			   while(rs.next()){
+//				   if(rs.getString("COLUMN_NAME").equals(column)){
+//					   return true;
+//				   }
+//			   }
+//			  
+//			   //deallocate resources used
+//			   tableList.close();
+//			   rs.close();
+//			   
+//			  //if the column is not in the database
+//			  return false;      
+//	   }catch(SQLException se){
+//		   //not sure what to put here
+//		   return false;
+//	   }
+//	}
 }
