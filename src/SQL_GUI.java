@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Component;
 
+@SuppressWarnings("serial")
 public class SQL_GUI extends JFrame {
 	// JDBC -------------------------------------------------------
 	private SQL_JDBC jdbc;
@@ -41,6 +42,7 @@ public class SQL_GUI extends JFrame {
 	private final JMenuItem menuItem_getView = new JMenuItem("Create view");
 	private final Component horizontalStrut = Box.createHorizontalStrut(523);
 	private final JMenuItem menuItem_help = new JMenuItem("Help");
+	private final JMenuItem menuItem_commandLine = new JMenuItem("Command line");
 
 	/**
 	 * Launch the application.
@@ -104,7 +106,7 @@ public class SQL_GUI extends JFrame {
 		primaryPanel.setLayout(new BorderLayout(0, 0));
 		//setContentPane(primaryPanel);
 		
-		// Card setup -------------------------------------------------------
+		// Panel setup -------------------------------------------------------
 		
 		// Define JPanels and initialize each
 		JPanel _showAllTables = new showAllTables();
@@ -120,6 +122,7 @@ public class SQL_GUI extends JFrame {
 		JPanel _findColumn = new findColumn();
 		JPanel _getView = new getView();
 		JPanel _help = new help();
+		JPanel _commandLine = new commandLine(CLI);
 		
 		// Add JPanels to the primaryPanel with their constraints
 		primaryPanel.setLayout(layout);
@@ -136,9 +139,10 @@ public class SQL_GUI extends JFrame {
 		primaryPanel.add(_findColumn, 			"findColumn");
 		primaryPanel.add(_getView, 				"getView");
 		primaryPanel.add(_help, 				"help");
+		primaryPanel.add(_commandLine, 			"commandLine");
 		
-		// Default to the help panel
-		layout.show(primaryPanel, "help");
+		// Set default panel
+		layout.show(primaryPanel, "commandLine");
 		
 		getContentPane().add(primaryPanel);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -241,6 +245,13 @@ public class SQL_GUI extends JFrame {
 		});
 		
 		menu_misc.add(menuItem_getView);
+		menuItem_commandLine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				layout.show(primaryPanel, "commandLine");
+			}
+		});
+		
+		menu_misc.add(menuItem_commandLine);
 		
 		menuBar.add(horizontalStrut);
 		menuItem_help.addActionListener(new ActionListener() {
