@@ -11,7 +11,7 @@ import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class SQL_GUI extends JFrame {
+public class test_GUI_Example extends JFrame {
 
 	private JPanel primaryPanel;
 	
@@ -42,7 +42,7 @@ public class SQL_GUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public SQL_GUI() {
+	public test_GUI_Example() {
 		
 		
 		initGUI();
