@@ -12,9 +12,34 @@ public class SQL_CommandLineInterpreter {
 	
 	public SQL_CommandLineInterpreter() {
 		jdbc = new SQL_JDBC();
+		// While not connected, try to connect until connected or 10 attempts
+		int c = 0;
+		while (!jdbc.isConnected() && c < 9) {
+			System.out.println("Connection attempt " + c);
+			// Wait a second before trying again
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				System.out.println("ERROR: A thread exception has occured while attempting to connect to the Database");
+				System.out.println(e1);
+				e1.printStackTrace();
+			}
+			jdbc.connect();
+			c++;
+		}
+		
 		if (!jdbc.isConnected()) {
-			System.out.println("ERROR: Could not establish database connection");
-			// TODO Probably want to do something here
+			System.out.println("ERROR: Could not connect to Database after 10 attempts");
+			throw new RuntimeException();
+		}
+	}
+	
+	// Overloaded constructor intended for SQL_GUI
+	public SQL_CommandLineInterpreter(SQL_JDBC jdbc_passed) {
+		jdbc = jdbc_passed;
+		if (!jdbc.isConnected()) {
+			System.out.println("ERROR: JDBC is not connected when passed into CLI constructor");
+			throw new RuntimeException();
 		}
 	}
 
@@ -30,10 +55,6 @@ public class SQL_CommandLineInterpreter {
 		
 		// Tokenize the input
 		String[] tokens = input.split(" ");
-		
-//		for (String s : tokens) {
-//			System.out.println("token:" + s);
-//		}
 		
 		// if/else block to check for custom commands, else pass raw query
 		if (tokens[0].equalsIgnoreCase("jdb-show-related-tables")) {
