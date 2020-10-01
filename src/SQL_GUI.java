@@ -111,22 +111,22 @@ public class SQL_GUI extends JFrame {
 		// Panel setup -------------------------------------------------------
 		
 		// Define JPanels and initialize each
-		JPanel _showAllTables = new showAllTables();
-		JPanel _showAllColumns = new showAllColumns();
-		JPanel _showAllPrimaryKeys = new showAllPrimaryKeys();
-		JPanel _plotSchema = new plotSchema();
-		JPanel _searchPath = new searchPath(CLI);
-		JPanel _searchAndJoin = new searchAndJoin(jdbc);
-		JPanel _joinAndShowTables = new joinAndShowTables();
-		JPanel _showSelectedColumns = new showSelectedColumns();
-		JPanel _showRelatedTables = new showRelatedTables();
-		JPanel _ProductIDResolver = new ProductIDResolver();
-		JPanel _LocationIDResolver = new LocationIDResolver();
-		JPanel _stat = new stat(CLI);
-		JPanel _findColumn = new findColumn();
-		JPanel _getView = new getView();
-		JPanel _help = new help();
-		JPanel _commandLine = new commandLine(CLI);
+		JPanel _showAllTables = 		new showAllTables();
+		JPanel _showAllColumns =		new showAllColumns();
+		JPanel _showAllPrimaryKeys = 	new showAllPrimaryKeys();
+		JPanel _plotSchema =			new plotSchema();
+		JPanel _searchPath = 			new searchPath(CLI);
+		JPanel _searchAndJoin = 		new searchAndJoin(jdbc);
+		JPanel _joinAndShowTables = 	new joinAndShowTables();
+		JPanel _showSelectedColumns = 	new showSelectedColumns();
+		JPanel _showRelatedTables = 	new showRelatedTables();
+		JPanel _ProductIDResolver = 	new ProductIDResolver(jdbc);
+		JPanel _LocationIDResolver = 	new LocationIDResolver(jdbc);
+		JPanel _stat = 					new stat(CLI);
+		JPanel _findColumn = 			new findColumn();
+		JPanel _getView = 				new getView();
+		JPanel _help = 					new help();
+		JPanel _commandLine = 			new commandLine(CLI);
 		
 		// Add JPanels to the primaryPanel with their constraints
 		primaryPanel.setLayout(layout);
@@ -148,7 +148,7 @@ public class SQL_GUI extends JFrame {
 		primaryPanel.add(_commandLine, 			"commandLine");
 		
 		// Set default panel
-		layout.show(primaryPanel, "searchAndJoin");
+		layout.show(primaryPanel, "help");
 		
 		getContentPane().add(primaryPanel);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

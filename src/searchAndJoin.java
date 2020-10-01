@@ -21,6 +21,7 @@ import net.proteanit.sql.DbUtils;
 
 import javax.swing.JTable;
 
+@SuppressWarnings("serial")
 public class searchAndJoin extends JPanel {
 	private SQL_JDBC jdbc;
 	private final JLabel label_title = new JLabel("<HTML><u>Find a path between two tables and join them</U></HTML>");
