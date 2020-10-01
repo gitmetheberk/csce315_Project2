@@ -93,26 +93,31 @@ public class stat extends JPanel {
 		maxText = new JTextPane();
 		maxText.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		maxText.setBounds(200, 300, 200, 50);
+		maxText.setEditable(false);
 		add(maxText);
 		
 		minText = new JTextPane();
 		minText.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		minText.setBounds(200, 375, 200, 50);
+		minText.setEditable(false);
 		add(minText);
 		
 		meanText = new JTextPane();
 		meanText.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		meanText.setBounds(200, 450, 200, 50);
+		meanText.setEditable(false);
 		add(meanText);
 		
 		medianText = new JTextPane();
 		medianText.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		medianText.setBounds(200, 525, 200, 50);
+		medianText.setEditable(false);
 		add(medianText);
 		
 		histText = new JTextPane();
 		histText.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		histText.setBounds(550, 350, 300, 250);
+		histText.setEditable(false);
 		add(histText);
 		
 		JButton submitButton = new JButton("Show Results");

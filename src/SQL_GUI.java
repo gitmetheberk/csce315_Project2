@@ -115,8 +115,8 @@ public class SQL_GUI extends JFrame {
 		JPanel _showAllColumns = new showAllColumns();
 		JPanel _showAllPrimaryKeys = new showAllPrimaryKeys();
 		JPanel _plotSchema = new plotSchema();
-		JPanel _searchPath = new searchPath();
-		JPanel _searchAndJoin = new searchAndJoin();
+		JPanel _searchPath = new searchPath(CLI);
+		JPanel _searchAndJoin = new searchAndJoin(jdbc);
 		JPanel _joinAndShowTables = new joinAndShowTables();
 		JPanel _showSelectedColumns = new showSelectedColumns();
 		JPanel _showRelatedTables = new showRelatedTables();
@@ -148,7 +148,7 @@ public class SQL_GUI extends JFrame {
 		primaryPanel.add(_commandLine, 			"commandLine");
 		
 		// Set default panel
-		layout.show(primaryPanel, "commandLine");
+		layout.show(primaryPanel, "searchAndJoin");
 		
 		getContentPane().add(primaryPanel);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
