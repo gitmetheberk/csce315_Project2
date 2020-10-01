@@ -30,6 +30,8 @@ public class SQL_GUI extends JFrame {
 	private final JMenuItem menuItem_showRelatedTables = new JMenuItem("Show related tables");
 	private final JMenuItem menuItem_searchPath = new JMenuItem("Search path");
 	private final JMenuItem menuItem_searchAndJoin = new JMenuItem("Search path and join");
+	private final JMenuItem menuItem_joinAndShowTables = new JMenuItem("Join and show tables");
+	private final JMenuItem menuItem_showSelectedColumns = new JMenuItem("Show selected columns");
 	private final JMenu menu_IDResolvers = new JMenu("ID Resolvers");
 	private final JMenuItem menuItem_ProductIDResolver = new JMenuItem("ProductID");
 	private final JMenuItem menuItem_LocationIDResolver = new JMenuItem("LocationID");
@@ -115,10 +117,12 @@ public class SQL_GUI extends JFrame {
 		JPanel _plotSchema = new plotSchema();
 		JPanel _searchPath = new searchPath();
 		JPanel _searchAndJoin = new searchAndJoin();
+		JPanel _joinAndShowTables = new joinAndShowTables();
+		JPanel _showSelectedColumns = new showSelectedColumns();
 		JPanel _showRelatedTables = new showRelatedTables();
 		JPanel _ProductIDResolver = new ProductIDResolver();
 		JPanel _LocationIDResolver = new LocationIDResolver();
-		JPanel _stat = new stat();
+		JPanel _stat = new stat(CLI);
 		JPanel _findColumn = new findColumn();
 		JPanel _getView = new getView();
 		JPanel _help = new help();
@@ -132,6 +136,8 @@ public class SQL_GUI extends JFrame {
 		primaryPanel.add(_plotSchema, 			"plotSchema");
 		primaryPanel.add(_searchPath, 			"searchPath");
 		primaryPanel.add(_searchAndJoin, 		"searchAndJoin");
+		primaryPanel.add(_joinAndShowTables, 	"joinAndShowTables");
+		primaryPanel.add(_showSelectedColumns, 	"showSelectedColumns");
 		primaryPanel.add(_showRelatedTables, 	"showRelatedTables");
 		primaryPanel.add(_ProductIDResolver, 	"ProductIDResolver");
 		primaryPanel.add(_LocationIDResolver, 	"LocationIDResolver");
@@ -193,6 +199,20 @@ public class SQL_GUI extends JFrame {
 		menuItem_searchAndJoin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				layout.show(primaryPanel, "searchAndJoin");
+			}
+		});
+		
+		menu_tableRelationships.add(menuItem_joinAndShowTables);
+		menuItem_joinAndShowTables.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				layout.show(primaryPanel, "joinAndShowTables");
+			}
+		});
+		
+		menu_tableRelationships.add(menuItem_showSelectedColumns);
+		menuItem_showSelectedColumns.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				layout.show(primaryPanel, "showSelectedColumns");
 			}
 		});
 		
