@@ -111,8 +111,8 @@ public class SQL_GUI extends JFrame {
 		// Panel setup -------------------------------------------------------
 		
 		// Define JPanels and initialize each
-		JPanel _showAllTables = 		new showAllTables();
-		JPanel _showAllColumns =		new showAllColumns();
+		JPanel _showAllTables = 		new showAllTables(CLI);
+		JPanel _showAllColumns =		new showAllColumns(CLI);
 		JPanel _showAllPrimaryKeys = 	new showAllPrimaryKeys();
 		JPanel _plotSchema =			new plotSchema();
 		JPanel _searchPath = 			new searchPath(CLI);
