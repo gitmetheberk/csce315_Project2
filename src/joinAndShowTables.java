@@ -1,14 +1,21 @@
+import net.proteanit.sql.DbUtils;
+
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JLabel;
-import java.awt.Font;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JTable;
+
+import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JTable;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
+
+import java.sql.ResultSet;
 
 public class joinAndShowTables extends JPanel {
 	private JTable resultTable;
@@ -24,10 +31,14 @@ public class joinAndShowTables extends JPanel {
 	private boolean showTable3;
 
 	public joinAndShowTables() {
-		initGUI();
+		//
 	}
-	
-	private void initGUI() {
+
+	public joinAndShowTables(SQL_JDBC jdbc) {
+		initGUI(jdbc);
+	}
+
+	private void initGUI(SQL_JDBC jdbc) {
 		setLayout(null);
 		setBounds(100, 100, 1080, 720);
 		
@@ -95,18 +106,82 @@ public class joinAndShowTables extends JPanel {
 		tableField1 = new JTextField();
 		tableField1.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		tableField1.setBounds(150, 175, 200, 50);
+		tableField1.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(!tableField1.getText().equals("") && !joinField1.getText().equals("")) {
+					showTable2 = true;
+					tableLabel2.setVisible(showTable2);
+					onLabel2.setVisible(showTable2);
+					tableField2.setVisible(showTable2);
+					joinField2.setVisible(showTable2);
+				}else {
+					showTable2 = false;
+					showTable3 = false;
+					tableLabel2.setVisible(showTable2);
+					onLabel2.setVisible(showTable2);
+					tableField2.setVisible(showTable2);
+					joinField2.setVisible(showTable2);
+					tableLabel3.setVisible(showTable3);
+					onLabel3.setVisible(showTable3);
+					tableField3.setVisible(showTable3);
+					joinField3.setVisible(showTable3);
+				}
+			}
+		});
 		add(tableField1);
 		tableField1.setColumns(10);
 		
 		joinField1 = new JTextField();
 		joinField1.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		joinField1.setBounds(150, 225, 200, 50);
+		joinField1.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(!tableField1.getText().equals("") && !joinField1.getText().equals("")) {
+					showTable2 = true;
+					tableLabel2.setVisible(showTable2);
+					onLabel2.setVisible(showTable2);
+					tableField2.setVisible(showTable2);
+					joinField2.setVisible(showTable2);
+				}else {
+					showTable2 = false;
+					showTable3 = false;
+					tableLabel2.setVisible(showTable2);
+					onLabel2.setVisible(showTable2);
+					tableField2.setVisible(showTable2);
+					joinField2.setVisible(showTable2);
+					tableLabel3.setVisible(showTable3);
+					onLabel3.setVisible(showTable3);
+					tableField3.setVisible(showTable3);
+					joinField3.setVisible(showTable3);
+				}
+			}
+		});
 		add(joinField1);
 		joinField1.setColumns(10);
 		
 		tableField2 = new JTextField();
 		tableField2.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		tableField2.setBounds(150, 300, 200, 50);
+		tableField2.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(!tableField2.getText().equals("") && !joinField2.getText().equals("")) {
+					showTable3 = true;
+					tableLabel3.setVisible(showTable3);
+					onLabel3.setVisible(showTable3);
+					tableField3.setVisible(showTable3);
+					joinField3.setVisible(showTable3);
+				}else {
+					showTable3 = false;
+					tableLabel3.setVisible(showTable3);
+					onLabel3.setVisible(showTable3);
+					tableField3.setVisible(showTable3);
+					joinField3.setVisible(showTable3);
+				}
+			}
+		});
 		add(tableField2);
 		tableField2.setColumns(10);
 		tableField2.setVisible(false);
@@ -114,6 +189,24 @@ public class joinAndShowTables extends JPanel {
 		joinField2 = new JTextField();
 		joinField2.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		joinField2.setBounds(150, 350, 200, 50);
+		joinField2.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(!tableField2.getText().equals("") && !joinField2.getText().equals("")) {
+					showTable3 = true;
+					tableLabel3.setVisible(showTable3);
+					onLabel3.setVisible(showTable3);
+					tableField3.setVisible(showTable3);
+					joinField3.setVisible(showTable3);
+				}else {
+					showTable3 = false;
+					tableLabel3.setVisible(showTable3);
+					onLabel3.setVisible(showTable3);
+					tableField3.setVisible(showTable3);
+					joinField3.setVisible(showTable3);
+				}
+			}
+		});
 		add(joinField2);
 		joinField2.setColumns(10);
 		joinField2.setVisible(false);
@@ -132,28 +225,46 @@ public class joinAndShowTables extends JPanel {
 		joinField3.setColumns(10);
 		joinField3.setVisible(false);
 		
+		JScrollPane resultPane = new JScrollPane();
+		resultPane.setBounds(381, 101, 660, 600);
+		add(resultPane);
+		
 		resultTable = new JTable();
-		resultTable.setBounds(381, 101, 660, 600);
-		add(resultTable);
+		resultPane.setViewportView(resultTable);
 		
 		JButton submitButton = new JButton("Show Results");
 		submitButton.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		submitButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//replace with stuff
-				showTable2 = !showTable2;
-				tableLabel2.setVisible(showTable2);
-				onLabel2.setVisible(showTable2);
-				tableField2.setVisible(showTable2);
-				joinField2.setVisible(showTable2);
+				if (tableField.getText().equals("") || tableField1.getText().equals("") || joinField1.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please fill all the fields.");
+					return;
+				}
+				String query = "SELECT * FROM " + tableField.getText() + " JOIN " + tableField1.getText() + " ON " + tableField.getText() + "." + joinField1.getText() + " = " + tableField1.getText() + "." + joinField1.getText();
+				if (!tableField2.getText().equals("") && !joinField2.getText().equals("") && showTable2) {
+					query = query + " JOIN " + tableField2.getText() + " ON " + tableField.getText() + "." + joinField2.getText() + " = " + tableField2.getText() + "." + joinField2.getText();
+				}
+				if (!tableField3.getText().equals("") && !joinField3.getText().equals("") && showTable3) {
+					query = query + " JOIN " + tableField3.getText() + " ON " + tableField.getText() + "." + joinField3.getText() + " = " + tableField3.getText() + "." + joinField3.getText();
+				}
 				
-				showTable3 = !showTable3;
-				tableLabel3.setVisible(showTable3);
-				onLabel3.setVisible(showTable3);
-				tableField3.setVisible(showTable3);
-				joinField3.setVisible(showTable3);
+				query = query + ";";
 				
+				String sql = "USE adventureworks;";
+				ResultSet rs = jdbc.query(sql);
+				rs = jdbc.query(query);
+				  
+				if (rs == null) {
+					JOptionPane.showMessageDialog(null, "No columns to return.");
+					return;
+				}else {
+					resultTable.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				
+				if (resultTable.getRowCount() == 0) {
+					JOptionPane.showMessageDialog(null, "Warning: Your query produced zero results");
+				}
 			}
 		});
 		submitButton.setBounds(150, 550, 200, 50);
