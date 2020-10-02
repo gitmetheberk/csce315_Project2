@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.ScrollPaneConstants;
+import javax.swing.table.DefaultTableModel;
 
 import net.proteanit.sql.DbUtils;
 
@@ -115,6 +116,8 @@ public class searchAndJoin extends JPanel {
 				textField_origin.setText("");
 				textField_destination.setText("");
 				textField_path.setText("");
+				DefaultTableModel model = (DefaultTableModel) table_results.getModel();
+				model.setRowCount(0);
 			}
 		});
 		button_clear.setFont(new Font("Tahoma", Font.BOLD, 20));
