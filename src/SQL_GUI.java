@@ -113,13 +113,13 @@ public class SQL_GUI extends JFrame {
 		// Define JPanels and initialize each
 		JPanel _showAllTables = 		new showAllTables(CLI);
 		JPanel _showAllColumns =		new showAllColumns(CLI);
-		JPanel _showAllPrimaryKeys = 	new showAllPrimaryKeys();
+		JPanel _showAllPrimaryKeys = 	new showAllPrimaryKeys(CLI);
 		JPanel _plotSchema =			new plotSchema();
 		JPanel _searchPath = 			new searchPath(CLI);
 		JPanel _searchAndJoin = 		new searchAndJoin(jdbc);
 		JPanel _joinAndShowTables = 	new joinAndShowTables();
 		JPanel _showSelectedColumns = 	new showSelectedColumns(jdbc);
-		JPanel _showRelatedTables = 	new showRelatedTables();
+		JPanel _showRelatedTables = 	new showRelatedTables(CLI);
 		JPanel _ProductIDResolver = 	new ProductIDResolver(jdbc);
 		JPanel _LocationIDResolver = 	new LocationIDResolver(jdbc);
 		JPanel _stat = 					new stat(CLI);
