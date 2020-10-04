@@ -119,7 +119,7 @@ public class SQL_GUI extends JFrame {
 		JPanel _searchAndJoin = 		new searchAndJoin(jdbc);
 		JPanel _joinAndShowTables = 	new joinAndShowTables();
 		JPanel _showSelectedColumns = 	new showSelectedColumns(jdbc);
-		JPanel _showRelatedTables = 	new showRelatedTables(jdbc);
+		JPanel _showRelatedTables = 	new showRelatedTables();
 		JPanel _ProductIDResolver = 	new ProductIDResolver(jdbc);
 		JPanel _LocationIDResolver = 	new LocationIDResolver(jdbc);
 		JPanel _stat = 					new stat(CLI);
