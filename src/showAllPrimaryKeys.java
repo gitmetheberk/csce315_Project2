@@ -1,6 +1,6 @@
 import javax.swing.JPanel;
 import javax.swing.JLabel;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.Color;
 import javax.swing.JScrollPane;
@@ -17,7 +17,7 @@ public class showAllPrimaryKeys extends JPanel {
 	public showAllPrimaryKeys(SQL_CommandLineInterpreter CLI) {
 		setLayout(null);
 		
-		JLabel lblNewJgoodiesTitle = DefaultComponentFactory.getInstance().createTitle("Show All Primary Keys");
+		JLabel lblNewJgoodiesTitle = new JLabel("Show All Primary Keys");
 		lblNewJgoodiesTitle.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		lblNewJgoodiesTitle.setBounds(332, 55, 308, 35);
 		add(lblNewJgoodiesTitle);

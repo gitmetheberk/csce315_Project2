@@ -30,7 +30,7 @@ public class plotSchema extends JPanel {
 		add(scrollPane);
 		
 		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon(getClass().getResource("/img/schema.png")));
+		lblNewLabel_1.setIcon(new ImageIcon(plotSchema.class.getResource("schema.png")));
 		scrollPane.setViewportView(lblNewLabel_1);
 		lblNewLabel_1.setVisible(false);
 		

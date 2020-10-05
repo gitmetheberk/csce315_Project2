@@ -4,7 +4,6 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import java.awt.Color;
 import javax.swing.JTextArea;
 import java.awt.Font;
@@ -42,7 +41,7 @@ private JTextArea textArea = new JTextArea();
 		textArea.setVisible(true);
 		scrollPane.setVisible(true);
 		
-		JLabel lblNewJgoodiesTitle = DefaultComponentFactory.getInstance().createTitle("All Related Tables :");
+		JLabel lblNewJgoodiesTitle = new JLabel("All Related Tables :");
 		lblNewJgoodiesTitle.setFont(new Font("Tahoma", Font.PLAIN, 26));
 		lblNewJgoodiesTitle.setBounds(523, 45, 309, 37);
 		add(lblNewJgoodiesTitle);

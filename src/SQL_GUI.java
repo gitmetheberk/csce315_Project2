@@ -42,7 +42,7 @@ public class SQL_GUI extends JFrame {
 	private final JMenu menu_misc = new JMenu("Miscellaneous ");
 	private final JMenuItem menuItem_findColumn = new JMenuItem("Find column");
 	private final JMenuItem menuItem_getView = new JMenuItem("Create view");
-	private final Component horizontalStrut = Box.createHorizontalStrut(523);
+	private final Component horizontalStrut = Box.createHorizontalStrut(520);
 	private final JMenuItem menuItem_help = new JMenuItem("Help");
 	private final JMenuItem menuItem_commandLine = new JMenuItem("Command line");
 
@@ -209,13 +209,6 @@ public class SQL_GUI extends JFrame {
 			}
 		});
 		
-		menu_tableRelationships.add(menuItem_showSelectedColumns);
-		menuItem_showSelectedColumns.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				layout.show(primaryPanel, "showSelectedColumns");
-			}
-		});
-		
 		menu_tableRelationships.add(menuItem_searchAndJoin);
 		menuItem_showRelatedTables.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -261,6 +254,12 @@ public class SQL_GUI extends JFrame {
 		menuItem_getView.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				layout.show(primaryPanel, "getView");
+			}
+		});
+		menu_misc.add(menuItem_showSelectedColumns);
+		menuItem_showSelectedColumns.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				layout.show(primaryPanel, "showSelectedColumns");
 			}
 		});
 		
