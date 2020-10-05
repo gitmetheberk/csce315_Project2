@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -51,18 +50,3 @@ public class showAllPrimaryKeys extends JPanel {
 
 	}
 }
-=======
-
-import javax.swing.JPanel;
-
-public class showAllPrimaryKeys extends JPanel {
-
-	/**
-	 * Create the panel.
-	 */
-	public showAllPrimaryKeys() {
-
-	}
-
-}
->>>>>>> 4e3dc40093763bc66f77babce1a903f0ec76e0ab

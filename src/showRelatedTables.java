@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -71,19 +70,4 @@ private JTextArea textArea = new JTextArea();
 		}
 	
 }
-=======
 
-
-import javax.swing.JPanel;
-
-public class showRelatedTables extends JPanel {
-
-	/**
-	 * Create the panel.
-	 */
-	public showRelatedTables() {
-
-	}
-
-}
->>>>>>> 4e3dc40093763bc66f77babce1a903f0ec76e0ab
