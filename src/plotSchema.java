@@ -10,12 +10,14 @@ import javax.swing.JScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class plotSchema extends JPanel {
 
+public class plotSchema extends JPanel {
+	SQL_CommandLineInterpreter CLI;
 	/**
 	 * Create the panel.
 	 */
-	public plotSchema() {
+	public plotSchema(SQL_CommandLineInterpreter _CLI) {
+		CLI = _CLI;
 		setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("View Database Schema");
@@ -24,22 +26,18 @@ public class plotSchema extends JPanel {
 		lblNewLabel.setBounds(412, 52, 241, 36);
 		add(lblNewLabel);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(34, 162, 1009, 473);
-		scrollPane.setVisible(false);
-		add(scrollPane);
-		
-		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon(plotSchema.class.getResource("schema.png")));
-		scrollPane.setViewportView(lblNewLabel_1);
-		lblNewLabel_1.setVisible(false);
-		
 		JButton btnNewButton = new JButton("Generate");
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				lblNewLabel_1.setVisible(true);
-				scrollPane.setVisible(true);
+				MakeGraphThread processGraphThread = new MakeGraphThread(CLI);
+				Thread t1 = new Thread(processGraphThread);
+				t1.start();
+				btnNewButton.setText("Loading...");
+		    	while (t1.isAlive()) { //indicate to the user that the graph is still being created
+		    		;
+		    	}
+		    	btnNewButton.setText("Generate");
 			}
 		});
 		btnNewButton.setBounds(497, 100, 101, 30);
