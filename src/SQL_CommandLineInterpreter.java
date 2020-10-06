@@ -1064,20 +1064,14 @@ public class SQL_CommandLineInterpreter {
 		try {
 			FileWriter dotFileWriter = new FileWriter("src/schema.dot");
 				
-			dotFileWriter.write("digraph Schema {\n\n\t");
+			//give certain attributes to all nodes and edges of the graph
+			dotFileWriter.write("digraph Schema {\n\n\tnode[fillcolor=lightskyblue3 style=filled fontcolor=white]\n\tedge[fontcolor=maroon arrowsize=0.75]\n\n\t");
 			
 			String tableList = show_all_tables();
 			String[] splitTableList = tableList.split("\n");
 			
-			int tableCounter = 0;
 			for (String table : splitTableList) {
-				tableCounter++;
-				 if (tableCounter % 5 == 0) {
-					 dotFileWriter.write(table + ";\n\t");
-				 }
-				 else {
-					 dotFileWriter.write(table + "; ");
-				 }
+				dotFileWriter.write(table + "[label = <<b> " + table + " </b>>];\n\t"); //bold the table names so they are easier to read
 			}
 			dotFileWriter.write("\n\t"); //separate the edge graphviz code and the node graphviz code
 			
@@ -1122,6 +1116,7 @@ public class SQL_CommandLineInterpreter {
 		        for (int i=0; i<primary.size();i++) {
 		            if (Column_name.equals(primary.get(i))) {
 		                toReturn += primary.get(i) + ", ";
+		                break; //once we find a matching primary key for the column, no point in checking the other primary keys
 		            }
 		        }
 		    }
