@@ -154,8 +154,13 @@ public class SQL_CommandLineInterpreter {
 			}
 			
 			
-		// Catch invalid "jdb-" type command
-		} else if (tokens[0].toLowerCase().startsWith("jdb-")) {
+		
+		} else if (tokens[0].equalsIgnoreCase("jdb-show-db-schema")) {
+			writeGraphFile();
+			System.out.println("schema.dot file created");
+			
+		} // Catch invalid "jdb-" type command
+		  else if (tokens[0].toLowerCase().startsWith("jdb-")) { 
 			results = results.concat("ERROR: Invalid command\n");
 			return results;
 			
@@ -1054,6 +1059,81 @@ public class SQL_CommandLineInterpreter {
 		toReturn = toReturn.concat(parse_ResultSet(jdbc.query(query)));
 		return toReturn;
 	}
+	
+	private void writeGraphFile() {
+		try {
+			FileWriter dotFileWriter = new FileWriter("src/schema.dot");
+				
+			dotFileWriter.write("digraph Schema {\n\n\t");
+			
+			String tableList = show_all_tables();
+			String[] splitTableList = tableList.split("\n");
+			
+			int tableCounter = 0;
+			for (String table : splitTableList) {
+				tableCounter++;
+				 if (tableCounter % 5 == 0) {
+					 dotFileWriter.write(table + ";\n\t");
+				 }
+				 else {
+					 dotFileWriter.write(table + "; ");
+				 }
+			}
+			dotFileWriter.write("\n\t"); //separate the edge graphviz code and the node graphviz code
+			
+			for (String table : splitTableList) {
+				
+				String tablesToLink = show_related_tables(table);
+				String[] splitTablesToLink = tablesToLink.split("\n");
+				
+				for (String relatedTable : splitTablesToLink) {
+					if (relatedTable.equals("WARNING: No related tables found")) {
+						continue;
+					}
+					dotFileWriter.write(table + "->" + relatedTable + show_linking_keys(table, relatedTable) + "\n\t");
+				}
+			}
+			dotFileWriter.write("\n}");
+			dotFileWriter.close();
+		}catch(IOException e) {
+			System.out.print("ERROR: An error occured while processing jdb-graph\n");
+			System.out.print("Error: " + e + "\n");
+		}
+		
+	}
+	
+	private String show_linking_keys(String table, String relatedTable){
+        String toReturn = " [label = \"";
+        try {
+	        DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+	        ResultSet keyList = metaData.getPrimaryKeys("adventureworks", null, table);
+	        
+	        Vector<String> primary = new Vector<String>();
+	        
+	        while (keyList.next()) { //it needs to be a while loop because each row contains data about each primary key (there could possibly be multiple primary keys)
+	             primary.add(keyList.getString("COLUMN_NAME"));
+	        }        
+	        
+	        ResultSet columns = metaData.getColumns("adventureworks", null, relatedTable, null);
+		     
+		    while (columns.next()) {
+		        String Column_name = columns.getString("COLUMN_NAME");
+		         
+		        for (int i=0; i<primary.size();i++) {
+		            if (Column_name.equals(primary.get(i))) {
+		                toReturn += primary.get(i) + ", ";
+		            }
+		        }
+		    }
+		    toReturn = toReturn.substring(0, toReturn.length() - 2); //get rid of last comma and space
+	        toReturn += "\"]";
+	        
+        }catch(SQLException se){
+               toReturn += "ERROR: An error occured while processing show_linking_keys\n";
+               toReturn += "Error: " + se + "\n";
+         }
+        return toReturn;
+    }
 	
 //	private boolean check_for_table(String table){
 //		//A simple function to check if the table is in the database
