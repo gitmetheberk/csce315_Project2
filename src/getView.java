@@ -1,9 +1,4 @@
-package project2;
-
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -29,9 +24,10 @@ public class getView extends JPanel {
 	private final JButton button_submit = new JButton("Submit");
 	private final JButton button_clear = new JButton("Clear");
 	
-	public getView() {
-		//eclipse did not like when when I did not have a default constructor
-	}	
+//	public getView() {
+//		//eclipse did not like when when I did not have a default constructor
+//      Shouldn't matter as long as A constructor exists. 
+//	}	
 	
 	/**
 	 * Create the panel.

@@ -1,13 +1,13 @@
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 
 public class jFrameForSchema extends JFrame{
 	
@@ -39,7 +39,7 @@ public class jFrameForSchema extends JFrame{
 			lblNewLabel.setIcon(new ImageIcon(resizedImg));
 		}
 		
-		catch (java.io.IOException ioe) {
+		catch (IOException ioe) {
 			System.out.println("ERROR: An I/O exception occurred while trying to create the database schema image");
 			ioe.printStackTrace();
 		}

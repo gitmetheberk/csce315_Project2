@@ -1,7 +1,4 @@
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JLabel;

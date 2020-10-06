@@ -1,11 +1,7 @@
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Font;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
-import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 import net.proteanit.sql.DbUtils;
@@ -15,8 +11,6 @@ import javax.swing.JScrollPane;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.swing.JTable;
 
 public class ProductIDResolver extends JPanel {

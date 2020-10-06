@@ -30,9 +30,9 @@ public class joinAndShowTables extends JPanel {
 	private boolean showTable2;
 	private boolean showTable3;
 
-	public joinAndShowTables() {
-		//
-	}
+//	public joinAndShowTables() {
+//		
+//	}
 
 	public joinAndShowTables(SQL_JDBC jdbc) {
 		initGUI(jdbc);
@@ -226,11 +226,12 @@ public class joinAndShowTables extends JPanel {
 		joinField3.setVisible(false);
 		
 		JScrollPane resultPane = new JScrollPane();
-		resultPane.setBounds(381, 101, 660, 600);
+		resultPane.setBounds(381, 101, 660, 540);
 		add(resultPane);
 		
 		resultTable = new JTable();
 		resultPane.setViewportView(resultTable);
+		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Ensures columns aren't squashed together so the horizontal scrollbar will show up
 		
 		JButton submitButton = new JButton("Show Results");
 		submitButton.setFont(new Font("Tahoma", Font.PLAIN, 25));

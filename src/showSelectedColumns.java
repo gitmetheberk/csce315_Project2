@@ -35,9 +35,9 @@ public class showSelectedColumns extends JPanel {
 	private boolean showc5;
 	private boolean showc6;
 
-	public showSelectedColumns() {
-		//
-	}
+//	public showSelectedColumns() {
+//		//
+//	}
 	
 	public showSelectedColumns(SQL_JDBC jdbc) {
 		initGUI(jdbc);
@@ -279,7 +279,7 @@ public class showSelectedColumns extends JPanel {
 		columnField6.setVisible(false);
 		
 		JScrollPane resultPane = new JScrollPane();
-		resultPane.setBounds(381, 101, 660, 600);
+		resultPane.setBounds(381, 101, 660, 536);
 		add(resultPane);
 		
 		resultTable = new JTable();
@@ -323,7 +323,7 @@ public class showSelectedColumns extends JPanel {
 			}
 		});
 		allCheckBox.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		allCheckBox.setBounds(150, 550, 230, 50);
+		allCheckBox.setBounds(127, 531, 223, 50);
 		add(allCheckBox);
 		
 		JButton submitButton = new JButton("Show Results");
@@ -381,7 +381,7 @@ public class showSelectedColumns extends JPanel {
 			}
 		});
 		submitButton.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		submitButton.setBounds(150, 625, 200, 50);
+		submitButton.setBounds(150, 587, 200, 50);
 		add(submitButton);
 	}
 }

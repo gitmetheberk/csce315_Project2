@@ -1,9 +1,4 @@
-package project2;
-
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -12,8 +7,6 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import javax.swing.ScrollPaneConstants;
 
 public class findColumn extends JPanel {

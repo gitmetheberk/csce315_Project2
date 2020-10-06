@@ -114,17 +114,17 @@ public class SQL_GUI extends JFrame {
 		JPanel _showAllTables = 		new showAllTables(CLI);
 		JPanel _showAllColumns =		new showAllColumns(CLI);
 		JPanel _showAllPrimaryKeys = 	new showAllPrimaryKeys(CLI);
-		JPanel _plotSchema =			new plotSchema();
+		JPanel _plotSchema =			new plotSchema(CLI);
 		JPanel _searchPath = 			new searchPath(CLI);
 		JPanel _searchAndJoin = 		new searchAndJoin(jdbc);
-		JPanel _joinAndShowTables = 	new joinAndShowTables();
+		JPanel _joinAndShowTables = 	new joinAndShowTables(jdbc);
 		JPanel _showSelectedColumns = 	new showSelectedColumns(jdbc);
 		JPanel _showRelatedTables = 	new showRelatedTables(CLI);
 		JPanel _ProductIDResolver = 	new ProductIDResolver(jdbc);
 		JPanel _LocationIDResolver = 	new LocationIDResolver(jdbc);
 		JPanel _stat = 					new stat(CLI);
-		JPanel _findColumn = 			new findColumn();
-		JPanel _getView = 				new getView();
+		JPanel _findColumn = 			new findColumn(CLI);
+		JPanel _getView = 				new getView(CLI);
 		JPanel _help = 					new help();
 		JPanel _commandLine = 			new commandLine(CLI);
 		
@@ -202,13 +202,6 @@ public class SQL_GUI extends JFrame {
 			}
 		});
 		
-		menu_tableRelationships.add(menuItem_joinAndShowTables);
-		menuItem_joinAndShowTables.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				layout.show(primaryPanel, "joinAndShowTables");
-			}
-		});
-		
 		menu_tableRelationships.add(menuItem_searchAndJoin);
 		menuItem_showRelatedTables.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -217,6 +210,13 @@ public class SQL_GUI extends JFrame {
 		});
 		
 		menu_tableRelationships.add(menuItem_showRelatedTables);
+		
+		menu_tableRelationships.add(menuItem_joinAndShowTables);
+		menuItem_joinAndShowTables.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				layout.show(primaryPanel, "joinAndShowTables");
+			}
+		});
 		
 		menuBar.add(menu_IDResolvers);
 		menuItem_ProductIDResolver.addActionListener(new ActionListener() {

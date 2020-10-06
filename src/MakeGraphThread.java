@@ -11,7 +11,7 @@ public class MakeGraphThread implements Runnable {
     }
 
     public void run() {
-    	CLI.processInput("jdb-show-db-schema");
+    	CLI.processInput("jdb-plot-schema");
     	JFrame schemaFrame = new jFrameForSchema();
 		schemaFrame.setVisible(true);
     }

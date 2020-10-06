@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Queue;
 import java.util.LinkedList; 
@@ -155,7 +157,7 @@ public class SQL_CommandLineInterpreter {
 			
 			
 		
-		} else if (tokens[0].equalsIgnoreCase("jdb-show-db-schema")) {
+		} else if (tokens[0].equalsIgnoreCase("jdb-plot-schema")) {
 			writeGraphFile();
 			System.out.println("schema.dot file created");
 			
