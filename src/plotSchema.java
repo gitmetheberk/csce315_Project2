@@ -23,7 +23,7 @@ public class plotSchema extends JPanel {
 		JLabel lblNewLabel = new JLabel("View Database Schema");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(412, 52, 241, 36);
+		lblNewLabel.setBounds(406, 265, 241, 36);
 		add(lblNewLabel);
 		
 		JButton btnNewButton = new JButton("Generate");
@@ -40,7 +40,7 @@ public class plotSchema extends JPanel {
 		    	btnNewButton.setText("Generate");
 			}
 		});
-		btnNewButton.setBounds(497, 100, 101, 30);
+		btnNewButton.setBounds(480, 311, 101, 30);
 		add(btnNewButton);
 		
 
