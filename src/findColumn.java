@@ -1,4 +1,9 @@
+package project2;
+
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -8,6 +13,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import javax.swing.ScrollPaneConstants;
 
 public class findColumn extends JPanel {
@@ -21,7 +28,9 @@ public class findColumn extends JPanel {
 	private final JButton button_submit = new JButton("Submit");
 	private final JButton button_clear = new JButton("Clear");
 	
-	
+	public findColumn() {
+		//eclipse did not like when when I did not have a default constructor
+	}	
 	/**
 	 * Create the panel.
 	 */
