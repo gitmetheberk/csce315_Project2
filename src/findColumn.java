@@ -20,9 +20,10 @@ public class findColumn extends JPanel {
 	private final JButton button_submit = new JButton("Submit");
 	private final JButton button_clear = new JButton("Clear");
 	
-	public findColumn() {
-		//eclipse did not like when when I did not have a default constructor
-	}	
+//	public findColumn() {
+//		//eclipse did not like when when I did not have a default constructor
+//		// Shouldn't matter
+//	}	
 	/**
 	 * Create the panel.
 	 */

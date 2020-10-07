@@ -9,9 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JTextArea;
 
 public class showAllPrimaryKeys extends JPanel {
-	
-	private SQL_CommandLineInterpreter Keys;
-	
+
 	public showAllPrimaryKeys(SQL_CommandLineInterpreter CLI) {
 		setLayout(null);
 		
@@ -26,7 +24,6 @@ public class showAllPrimaryKeys extends JPanel {
 		
 		JTextArea textArea = new JTextArea();
 		scrollPane.setViewportView(textArea);
-		Keys=CLI;
 		
 		JButton btnNewButton = new JButton("Show");
 		btnNewButton.addActionListener(new ActionListener() {
