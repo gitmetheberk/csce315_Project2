@@ -15,7 +15,7 @@ Project requirements: https://people.engr.tamu.edu/choe/choe/courses/20fall/315/
 * src\SQL_CommandLine.java contains the user facing commandline interface, it is very simple and is primarily a while loop to scan for user input
 * src\SQL_CommandLineInterpreter.java contains all input processing functions for command line input. It also contains all functions which support custom commands
 * src\SQL_GUI.java contains the main class for the graphical user interface, initializes all sub panels.
-* All other .java files support the primary SQL_* classes perofmring a function defined by their name.
+* All other .java files support the primary SQL_* classes by performing a function defined by their name.
 
 # Libraries
 * https://hacksmile.com/rs2xml-jar-free-download/
