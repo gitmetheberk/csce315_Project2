@@ -17,11 +17,11 @@ public class showAllPrimaryKeys extends JPanel {
 		
 		JLabel lblNewJgoodiesTitle = new JLabel("Show All Primary Keys");
 		lblNewJgoodiesTitle.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		lblNewJgoodiesTitle.setBounds(332, 55, 308, 35);
+		lblNewJgoodiesTitle.setBounds(414, 55, 252, 35);
 		add(lblNewJgoodiesTitle);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 147, 909, 367);
+		scrollPane.setBounds(85, 147, 909, 367);
 		add(scrollPane);
 		
 		JTextArea textArea = new JTextArea();
@@ -38,7 +38,7 @@ public class showAllPrimaryKeys extends JPanel {
 			}
 		});
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		btnNewButton.setBounds(379, 101, 148, 35);
+		btnNewButton.setBounds(466, 101, 148, 35);
 		add(btnNewButton);
 		
 

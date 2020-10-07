@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
 
 
 public class plotSchema extends JPanel {
@@ -19,26 +20,26 @@ public class plotSchema extends JPanel {
 		setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("View Database Schema");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(406, 265, 241, 36);
+		lblNewLabel.setBounds(227, 95, 626, 76);
 		add(lblNewLabel);
 		
 		JButton btnNewButton = new JButton("Generate");
+		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 65));
+		btnNewButton.setBackground(new Color(139, 0, 0));
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				MakeGraphThread processGraphThread = new MakeGraphThread(CLI);
 				Thread t1 = new Thread(processGraphThread);
 				t1.start();
-				btnNewButton.setText("Loading...");
 		    	while (t1.isAlive()) { //indicate to the user that the graph is still being created
 		    		;
 		    	}
-		    	btnNewButton.setText("Generate");
 			}
 		});
-		btnNewButton.setBounds(480, 311, 101, 30);
+		btnNewButton.setBounds(74, 200, 931, 319);
 		add(btnNewButton);
 		
 

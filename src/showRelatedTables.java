@@ -32,6 +32,7 @@ private JTextArea textArea = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(523, 93, 417, 400);
 		add(scrollPane);
+		textArea.setFont(new Font("Garamond", Font.BOLD, 20));
 		
 		//JTextArea textArea = new JTextArea();
 		scrollPane.setViewportView(textArea);

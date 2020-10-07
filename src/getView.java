@@ -9,10 +9,17 @@ import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
+
 import javax.swing.ScrollPaneConstants;
+import javax.swing.table.DefaultTableModel;
+
+import net.proteanit.sql.DbUtils;
+import javax.swing.JTable;
 
 public class getView extends JPanel {
 	private SQL_CommandLineInterpreter CLI;
+	private SQL_JDBC jdbc;
 	private final JLabel label_title = new JLabel("<HTML><u>Create a View: </U></HTML>");
 	private final JTextField textField_viewName = new JTextField();
 	private final JTextField textField_query = new JTextField();
@@ -23,6 +30,8 @@ public class getView extends JPanel {
 	private final JScrollPane scrollPane_output = new JScrollPane();
 	private final JButton button_submit = new JButton("Submit");
 	private final JButton button_clear = new JButton("Clear");
+	private final JTable table_results = new JTable();
+	private final JScrollPane scrollPane_results = new JScrollPane();
 	
 //	public getView() {
 //		//eclipse did not like when when I did not have a default constructor
@@ -32,7 +41,7 @@ public class getView extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public getView(SQL_CommandLineInterpreter cli) {
+	public getView(SQL_CommandLineInterpreter cli, SQL_JDBC JDBC) {
 		textField_query.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -58,6 +67,7 @@ public class getView extends JPanel {
 		textField_viewName.setFont(new Font("Arial", Font.PLAIN, 15));
 		textField_viewName.setBounds(230, 53, 269, 35);
 		textField_viewName.setColumns(10);
+		jdbc = JDBC;
 		CLI = cli;
 		initGUI();
 	}
@@ -106,12 +116,19 @@ public class getView extends JPanel {
 				textField_viewName.setText("");
 				textField_query.setText("");
 				textField_output.setText("");
+				DefaultTableModel model = (DefaultTableModel) table_results.getModel();
+				model.setRowCount(0);
 			}
 		});
 		button_clear.setFont(new Font("Tahoma", Font.BOLD, 20));
 		button_clear.setBounds(892, 53, 128, 80);
 		
 		add(button_clear);
+		scrollPane_results.setBounds(99, 191, 922, 450);
+		
+		add(scrollPane_results);
+		scrollPane_results.setViewportView(table_results);
+		table_results.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	}
 	
 	// Driver function
@@ -132,6 +149,11 @@ public class getView extends JPanel {
 		// Pass to CLI as command and display output after processing
 		outputString = CLI.processInput("jdb-get-view " + t1 + " " + t2);
 		textField_output.setText(outputString);
+		
+		
+		// Query to display resulting view in table
+		ResultSet joinResults = jdbc.query("select * from " + t1);
+		table_results.setModel(DbUtils.resultSetToTableModel(joinResults));
 		return;
 	}
 }

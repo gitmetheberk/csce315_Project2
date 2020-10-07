@@ -124,7 +124,7 @@ public class SQL_GUI extends JFrame {
 		JPanel _LocationIDResolver = 	new LocationIDResolver(jdbc);
 		JPanel _stat = 					new stat(CLI);
 		JPanel _findColumn = 			new findColumn(CLI);
-		JPanel _getView = 				new getView(CLI);
+		JPanel _getView = 				new getView(CLI, jdbc);
 		JPanel _help = 					new help();
 		JPanel _commandLine = 			new commandLine(CLI);
 		

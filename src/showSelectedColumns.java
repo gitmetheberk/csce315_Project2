@@ -284,6 +284,7 @@ public class showSelectedColumns extends JPanel {
 		
 		resultTable = new JTable();
 		resultPane.setViewportView(resultTable);
+		resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JCheckBox allCheckBox = new JCheckBox("Select all Columns");
 		allCheckBox.setSelected(false);

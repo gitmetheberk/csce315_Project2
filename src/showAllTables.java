@@ -19,7 +19,7 @@ public class showAllTables extends JPanel {
 		setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(297, 125, 533, 422);
+		scrollPane.setBounds(273, 125, 533, 422);
 		scrollPane.setVisible(false);
 		add(scrollPane);
 		
@@ -39,13 +39,13 @@ public class showAllTables extends JPanel {
 				scrollPane.setVisible(true);
 			}
 		});
-		btnNewButton.setBounds(523, 77, 114, 30);
+		btnNewButton.setBounds(483, 77, 114, 30);
 		add(btnNewButton);
 		
 		JLabel lblNewLabel = new JLabel("View All Database Tables");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(451, 25, 269, 42);
+		lblNewLabel.setBounds(405, 25, 269, 42);
 		add(lblNewLabel);
 		
 	}
