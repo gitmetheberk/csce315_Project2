@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Queue;
 import java.util.LinkedList; 
@@ -12,9 +14,34 @@ public class SQL_CommandLineInterpreter {
 	
 	public SQL_CommandLineInterpreter() {
 		jdbc = new SQL_JDBC();
+		// While not connected, try to connect until connected or 10 attempts
+		int c = 0;
+		while (!jdbc.isConnected() && c < 9) {
+			System.out.println("Connection attempt " + c);
+			// Wait a second before trying again
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				System.out.println("ERROR: A thread exception has occured while attempting to connect to the Database");
+				System.out.println(e1);
+				e1.printStackTrace();
+			}
+			jdbc.connect();
+			c++;
+		}
+		
 		if (!jdbc.isConnected()) {
-			System.out.println("ERROR: Could not establish database connection");
-			// TODO Probably want to do something here
+			System.out.println("ERROR: Could not connect to Database after 10 attempts");
+			throw new RuntimeException();
+		}
+	}
+	
+	// Overloaded constructor intended for SQL_GUI
+	public SQL_CommandLineInterpreter(SQL_JDBC jdbc_passed) {
+		jdbc = jdbc_passed;
+		if (!jdbc.isConnected()) {
+			System.out.println("ERROR: JDBC is not connected when passed into CLI constructor");
+			throw new RuntimeException();
 		}
 	}
 
@@ -30,10 +57,6 @@ public class SQL_CommandLineInterpreter {
 		
 		// Tokenize the input
 		String[] tokens = input.split(" ");
-		
-//		for (String s : tokens) {
-//			System.out.println("token:" + s);
-//		}
 		
 		// if/else block to check for custom commands, else pass raw query
 		if (tokens[0].equalsIgnoreCase("jdb-show-related-tables")) {
@@ -133,8 +156,13 @@ public class SQL_CommandLineInterpreter {
 			}
 			
 			
-		// Catch invalid "jdb-" type command
-		} else if (tokens[0].toLowerCase().startsWith("jdb-")) {
+		
+		} else if (tokens[0].equalsIgnoreCase("jdb-plot-schema")) {
+			writeGraphFile();
+			System.out.println("schema.dot file created");
+			
+		} // Catch invalid "jdb-" type command
+		  else if (tokens[0].toLowerCase().startsWith("jdb-")) { 
 			results = results.concat("ERROR: Invalid command\n");
 			return results;
 			
@@ -1033,6 +1061,76 @@ public class SQL_CommandLineInterpreter {
 		toReturn = toReturn.concat(parse_ResultSet(jdbc.query(query)));
 		return toReturn;
 	}
+	
+	private void writeGraphFile() {
+		try {
+			FileWriter dotFileWriter = new FileWriter("src/schema.dot");
+				
+			//give certain attributes to all nodes and edges of the graph
+			dotFileWriter.write("digraph Schema {\n\n\tnode[fillcolor=lightskyblue3 style=filled fontcolor=white]\n\tedge[fontcolor=maroon arrowsize=0.75]\n\n\t");
+			
+			String tableList = show_all_tables();
+			String[] splitTableList = tableList.split("\n");
+			
+			for (String table : splitTableList) {
+				dotFileWriter.write(table + "[label = <<b> " + table + " </b>>];\n\t"); //bold the table names so they are easier to read
+			}
+			dotFileWriter.write("\n\t"); //separate the edge graphviz code and the node graphviz code
+			
+			for (String table : splitTableList) {
+				
+				String tablesToLink = show_related_tables(table);
+				String[] splitTablesToLink = tablesToLink.split("\n");
+				
+				for (String relatedTable : splitTablesToLink) {
+					if (relatedTable.equals("WARNING: No related tables found")) {
+						continue;
+					}
+					dotFileWriter.write(table + "->" + relatedTable + show_linking_keys(table, relatedTable) + "\n\t");
+				}
+			}
+			dotFileWriter.write("\n}");
+			dotFileWriter.close();
+		}catch(IOException e) {
+			System.out.print("ERROR: An error occured while processing jdb-graph\n");
+			System.out.print("Error: " + e + "\n");
+		}
+		
+	}
+	
+	private String show_linking_keys(String table, String relatedTable){
+        String toReturn = " [label = \"";
+        try {
+	        DatabaseMetaData metaData = jdbc.get_DatabaseMetaData();
+	        ResultSet keyList = metaData.getPrimaryKeys("adventureworks", null, table);
+	        
+	        Vector<String> primary = new Vector<String>();
+	        
+	        while (keyList.next()) { //it needs to be a while loop because each row contains data about each primary key (there could possibly be multiple primary keys)
+	             primary.add(keyList.getString("COLUMN_NAME"));
+	        }        
+	        
+	        ResultSet columns = metaData.getColumns("adventureworks", null, relatedTable, null);
+		     
+		    while (columns.next()) {
+		        String Column_name = columns.getString("COLUMN_NAME");
+		         
+		        for (int i=0; i<primary.size();i++) {
+		            if (Column_name.equals(primary.get(i))) {
+		                toReturn += primary.get(i) + ", ";
+		                break; //once we find a matching primary key for the column, no point in checking the other primary keys
+		            }
+		        }
+		    }
+		    toReturn = toReturn.substring(0, toReturn.length() - 2); //get rid of last comma and space
+	        toReturn += "\"]";
+	        
+        }catch(SQLException se){
+               toReturn += "ERROR: An error occured while processing show_linking_keys\n";
+               toReturn += "Error: " + se + "\n";
+         }
+        return toReturn;
+    }
 	
 //	private boolean check_for_table(String table){
 //		//A simple function to check if the table is in the database

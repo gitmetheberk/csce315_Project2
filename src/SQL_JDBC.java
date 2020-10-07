@@ -13,7 +13,7 @@ public class SQL_JDBC {
 	// Holds connection info for the DB, established in the constructor
 	private Connection connection;
 
-	// Status flag: Whether or not this object is connected to the DB, may not be used
+	// Status flag: Whether or not connection is valid
 	private boolean connected;
 	
 	
@@ -25,16 +25,41 @@ public class SQL_JDBC {
 		} catch (SQLException e) {
 			System.out.println("ERROR: SQL EXCEPTION WHILE CONNECTING TO DATABASE");
 			System.out.println(e);
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			connection = null;
 			connected = false;
 		} catch (Exception e) {
 			System.out.println("ERROR: EXCEPTION WHILE CONNECTING TO DATABASE");
 			System.out.println(e);
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 			connection = null;
 			connected = false;
 		}
+	}
+	
+	// Utility function which attempts to connect to the DB and returns whether or not it was successful
+	public boolean connect() {
+		if (connected) {
+			return true;
+		} else {
+			try {
+				connection = DriverManager.getConnection(DB_URL, USER, PASS);
+				connected = true;
+			} catch (SQLException e) {
+				System.out.println("ERROR: SQL EXCEPTION WHILE CONNECTING TO DATABASE");
+				System.out.println(e);
+				e.printStackTrace();
+				connection = null;
+				connected = false;
+			} catch (Exception e) {
+				System.out.println("ERROR: EXCEPTION WHILE CONNECTING TO DATABASE");
+				System.out.println(e);
+				e.printStackTrace();
+				connection = null;
+				connected = false;
+			}
+		}
+		return connected;
 	}
 	
 	public ResultSet query(String query) {
@@ -49,7 +74,10 @@ public class SQL_JDBC {
 			// Initialize a statement from the connection
 			Statement st = connection.createStatement();
 			
+			
+			
 			// Execute the query
+			st.executeQuery("use adventureworks");
 			rs = st.executeQuery(query);
 			
 			// Check for null ResultSet and return
