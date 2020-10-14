@@ -11,10 +11,9 @@ All provided .jar files work when compiling in a Windows environment. Ensure the
 # Setup
 1. Ensure all dependencies from the preceeding section are on the classpath when compiling and are compatible with your environment
 2. If you are running Windows 10, skip this step. If you are not running Windows 10, the provided mysql-connector .jar file may not work and you will have to download the .jar file for your operating system from https://dev.mysql.com/downloads/connector/j/. This new file needs to be on the classpath in place of the original mysql-connector .jar file
-3. Open src\SQL_JDBC.java and find the String variable DB_URL near the top of the class, this variable needs to be updated to point to your database installation
-4. Open src\SQL_JDBC.java and find the two String variables USER and PASS near the top of the class, these need to be updated to the username and password of an account on your database which should have read-only permissions and the ability to create views.
-5. Make sure Graphviz is installed on your system. If Graphviz is not installed, more information can be found at https://www.graphviz.org/download/
-6. After the above steps, the program should compile and run successfully
+3. Make sure Graphviz is installed on your system. If Graphviz is not installed, more information can be found at https://www.graphviz.org/download/
+4. After the above steps, the program should compile and run successfully
+5. When running the program, have your MySQL server address, userID, and password ready to login
 
 # File information
 * All files in the Connector J directory are part of the MySQL Connector. This is an external library which this program depends on.
