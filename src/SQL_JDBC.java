@@ -38,7 +38,7 @@ public class SQL_JDBC {
 		}
 	}
 	
-	// Needed a clean constructor for use in SQL_LOGIN
+	// Needed a clean constructor for use in SQL_LOGIN, added a dummy parameter
 	public SQL_JDBC(boolean notAValue) {
 		connection = null;
 		connected = false;
@@ -46,31 +46,6 @@ public class SQL_JDBC {
 		PASS = "";
 		USER = "";
 	}
-
-	// Not actually needed
-//	public SQL_JDBC(String url, String user, String pass) {
-//		DB_URL = url;
-//		USER = user;
-//		PASS = pass;
-//		
-//		// Establish DB connection with error handling
-//		try {
-//			connection = DriverManager.getConnection(DB_URL, USER, PASS);
-//			connected = true;
-//		} catch (SQLException e) {
-//			System.out.println("ERROR: SQL EXCEPTION WHILE CONNECTING TO DATABASE");
-//			System.out.println(e);
-//			e.printStackTrace();
-//			connection = null;
-//			connected = false;
-//		} catch (Exception e) {
-//			System.out.println("ERROR: EXCEPTION WHILE CONNECTING TO DATABASE");
-//			System.out.println(e);
-//			e.printStackTrace();
-//			connection = null;
-//			connected = false;
-//		}
-//	}
 	
 	// Utility function which attempts to connect to the DB and returns whether or not it was successful
 	public boolean connect() {

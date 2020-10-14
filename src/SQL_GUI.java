@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JMenuBar;
@@ -65,7 +64,7 @@ public class SQL_GUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SQL_GUI frame = new SQL_GUI();
+					SQL_GUI frame = new SQL_GUI(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -77,21 +76,29 @@ public class SQL_GUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public SQL_GUI() {
+	public SQL_GUI(SQL_JDBC _jdbc) {
 		// JDBC init -------------------------------------------------------
-		
-		// Connect to the database
-		if (login()) {
-			// Initialize the CLI with the existing jdbc
-			CLI = new SQL_CommandLineInterpreter(jdbc);
-			
-			initGUI();
-			
+		// Determine whether or not to launch login prompt
+		if (_jdbc == null) {
+			// Connect to the database
+			if (login()) {
+				// Initialize the CLI with the existing jdbc
+				CLI = new SQL_CommandLineInterpreter(jdbc);
+				
+				initGUI();
+				
+			} else {
+				// User has closed/cancelled connection, abort
+				dispose();
+				System.exit(1);
+			}
 		} else {
-			// User has closed/cancelled connection, abort
-			dispose();
-			System.exit(1);
+			// Must have been launched with a pre-existing JDBC
+			jdbc = _jdbc;
+			CLI = new SQL_CommandLineInterpreter(jdbc);
+			initGUI();
 		}
+		
 	}
 	private void initGUI() {
 		setTitle("AdventureWorks Database Client");
@@ -403,7 +410,7 @@ public class SQL_GUI extends JFrame {
 		// Loop until connected or cancelled
 		int result;
 		while (!jdbc.isConnected()) {
-			result = JOptionPane.showConfirmDialog(this, contentPane, "Login", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			result = JOptionPane.showConfirmDialog(this, contentPane, "AdventureWorks Client Login", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			
 			if (result == JOptionPane.YES_OPTION) {
 				if (!jdbc.isConnected()) {

@@ -29,3 +29,4 @@ Project requirements: https://people.engr.tamu.edu/choe/choe/courses/20fall/315/
 * https://github.com/BranislavLazic/SwingTutorials/blob/master/src/main/java/CardLayoutTutorial.java
 * https://stackoverflow.com/questions/4577792/how-to-clear-jtable
 * https://stackoverflow.com/questions/192078/how-do-i-get-the-size-of-a-java-sql-resultset
+* https://stackoverflow.com/questions/14407804/how-to-change-the-default-text-of-buttons-in-joptionpane-showinputdialog
