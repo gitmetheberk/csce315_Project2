@@ -1,4 +1,3 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -42,18 +41,22 @@ public class SQL_Dashboard extends JFrame {
 		});
 	}
 
-	/**
+		/**
 	 * Create the frame.
 	 */
 	public SQL_Dashboard() {
+			setTitle("AdventureWorks Executive Dashboard");
+			setResizable(false);
 		// Get user credentials and initialize the jdbc
 		// Connect to the database
 		
 		//* DEVELOPMENT ONLY *
-//		jdbc = new SQL_JDBC();
+		// Bypasses the login prompt so WindowBuilder will work
+//		jdbc = new SQL_JDBC(false);
 //		tryConnectDEV();
 //		initGUI();
 //		return;
+		//* DEVELOPMENT ONLY *
 		
 		if (login()) {
 			initGUI();
@@ -66,7 +69,7 @@ public class SQL_Dashboard extends JFrame {
 	}
 	private void initGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1920, 1080);
+		setBounds(100, 100, 1500, 844);
 		
 		setJMenuBar(menuBar);
 		mntmNewMenuItem.addActionListener(new ActionListener() {
@@ -109,8 +112,8 @@ public class SQL_Dashboard extends JFrame {
 	private final JButton button_DEVLOGIN = new JButton("DEV");
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenuItem mntmNewMenuItem = new JMenuItem("Launch database client");
-	private final JMenuItem mntmNewMenuItem_1 = new JMenuItem("New menu item");
-	private final Component horizontalStrut = Box.createHorizontalStrut(1300);
+	private final JMenuItem mntmNewMenuItem_1 = new JMenuItem("Do something");
+	private final Component horizontalStrut = Box.createHorizontalStrut(1000);
 	
 	boolean tryConnect() {
 		String url = textField_URL.getText();
@@ -140,7 +143,8 @@ public class SQL_Dashboard extends JFrame {
 	
 	// Function used to login with oneclick for development
 	boolean tryConnectDEV() {
-		return jdbc.connect("jdbc:mysql://localhost:3306", "user2", "c8kPA8eHaXsBNEPE");
+		//return jdbc.connect("jdbc:mysql://localhost:3306", "user2", "c8kPA8eHaXsBNEPE");
+		return jdbc.connect("jdbc:mysql://192.168.1.2:3306", "user2", "c8kPA8eHaXsBNEPE");
 	}
 	
 	boolean login() {

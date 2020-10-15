@@ -38,3 +38,4 @@ All provided .jar files work when compiling in a Windows environment. Ensure the
 * https://stackoverflow.com/questions/4577792/how-to-clear-jtable
 * https://stackoverflow.com/questions/192078/how-do-i-get-the-size-of-a-java-sql-resultset
 * https://stackoverflow.com/questions/14407804/how-to-change-the-default-text-of-buttons-in-joptionpane-showinputdialog
+* https://www.tutorialspoint.com/jfreechart/jfreechart_pie_chart.htm
