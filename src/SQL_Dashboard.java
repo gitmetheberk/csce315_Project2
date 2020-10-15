@@ -110,7 +110,7 @@ public class SQL_Dashboard extends JFrame {
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenuItem mntmNewMenuItem = new JMenuItem("Launch database client");
 	private final JMenuItem mntmNewMenuItem_1 = new JMenuItem("New menu item");
-	private final Component horizontalStrut = Box.createHorizontalStrut(1200);
+	private final Component horizontalStrut = Box.createHorizontalStrut(1300);
 	
 	boolean tryConnect() {
 		String url = textField_URL.getText();
