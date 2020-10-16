@@ -22,6 +22,9 @@ public class EmployeePieChart extends JPanel{
 	public EmployeePieChart(SQL_JDBC _jdbc) {
 		jdbc = _jdbc;
 		generatePieChart();
+		JLabel labelForChart = new JLabel("");
+		labelForChart.setIcon(new ImageIcon("src/employeePieChart.jpeg"));
+		this.add(labelForChart); //add the JLabel with the image inside to this instance of EmployeePieChart JPanel
 	}
 	
 	private void generatePieChart() {
