@@ -7,9 +7,12 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
+@SuppressWarnings("serial")
 public class EmployeeMap extends JPanel{
 
 	private SQL_JDBC jdbc;

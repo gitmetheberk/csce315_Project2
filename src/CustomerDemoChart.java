@@ -9,6 +9,7 @@ import org.knowm.xchart.PieChartBuilder;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.style.PieStyler.AnnotationType;
 
+@SuppressWarnings("serial")
 public class CustomerDemoChart extends JPanel {
 
 final PieChart chart = new PieChartBuilder().width(400).height(400).title("Customer Demographics").build();

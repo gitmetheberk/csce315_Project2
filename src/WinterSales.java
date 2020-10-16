@@ -16,12 +16,7 @@ public class WinterSales {
 	private JPanel barChart;
 
 	public WinterSales(SQL_JDBC _jdbc) {
-		if (_jdbc == null) {
-			jdbc = new SQL_JDBC(false);
-			jdbc.connect("jdbc:mysql://192.168.1.2:3306", "user2", "c8kPA8eHaXsBNEPE");
-		} else {
-			jdbc = _jdbc; 
-		}
+		jdbc = _jdbc; 
 
 		CategoryDataset dataset = createDataset();
 

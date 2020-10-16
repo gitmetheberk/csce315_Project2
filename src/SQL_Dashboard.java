@@ -19,6 +19,18 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import java.awt.Component;
 import javax.swing.Box;
+import java.awt.BorderLayout;
+import java.awt.Panel;
+
+/* LIST OF PANELS:
+ * Piechart - piechart_regionalStatistics.java - regional Sales Statistics US - getChartPanel_Other()
+ * Piechart - piechart_regionalStatistics.java - regional Sales Statistics Other - getChartPanel_US()
+ * Piechart - EmployeePieChart.java - JPanel
+ * Piechart - CustomerDemoChart.java - JPanel
+ * Map - EmployeeMap.java - JPanel
+ * Histogram - WinterSales.java - getChart()
+ * Linechart - MonthlyOrders.Java - get_chart()
+ */
 
 public class SQL_Dashboard extends JFrame {
 	private SQL_JDBC jdbc;
@@ -44,6 +56,7 @@ public class SQL_Dashboard extends JFrame {
 		/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings("unused")
 	public SQL_Dashboard() {
 			setTitle("AdventureWorks Executive Dashboard");
 			setResizable(false);
@@ -51,21 +64,33 @@ public class SQL_Dashboard extends JFrame {
 		// Connect to the database
 		
 		//* DEVELOPMENT ONLY *
-		// Bypasses the login prompt so WindowBuilder will work
-//		jdbc = new SQL_JDBC(false);
-//		tryConnectDEV();
-//		initGUI();
-//		return;
-		//* DEVELOPMENT ONLY *
-		
-		if (login()) {
+		// Bypasses the login prompt so WindowBuilder will work if true
+		if (true) {
+			jdbc = new SQL_JDBC(false);
+			tryConnectDEV();
 			initGUI();
-			
+			return;
 		} else {
-			// User has closed/cancelled connection, abort
-			dispose();
-			System.exit(1);
+			if (login()) {
+				initGUI();
+				
+			} else {
+				// User has closed/cancelled connection, abort
+				dispose();
+				System.exit(1);
+			}
 		}
+		//* DEVELOPMENT ONLY *
+	
+		// TODO Uncomment for production and remove development block
+//		if (login()) {
+//			initGUI();
+//			
+//		} else {
+//			// User has closed/cancelled connection, abort
+//			dispose();
+//			System.exit(1);
+//		}
 	}
 	private void initGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,6 +122,14 @@ public class SQL_Dashboard extends JFrame {
 		contentPane_primary.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane_primary);
 		contentPane_primary.setLayout(null);
+		panel_left.setBounds(130, 75, 586, 483);
+		
+		panel_left.add(new piechart_regionalStatistics(jdbc).getChartPanel_US());
+		
+		contentPane_primary.add(panel_left);
+		panel_right.setBounds(722, 75, 598, 483);
+		
+		contentPane_primary.add(panel_right);
 	}
 	
 	// Login panel ------------------------------------------------------
@@ -114,6 +147,8 @@ public class SQL_Dashboard extends JFrame {
 	private final JMenuItem mntmNewMenuItem = new JMenuItem("Launch database client");
 	private final JMenuItem mntmNewMenuItem_1 = new JMenuItem("Do something");
 	private final Component horizontalStrut = Box.createHorizontalStrut(1000);
+	private final Panel panel_left = new Panel();
+	private final Panel panel_right = new Panel();
 	
 	boolean tryConnect() {
 		String url = textField_URL.getText();
@@ -139,7 +174,6 @@ public class SQL_Dashboard extends JFrame {
 		
 		return connected;
 	}
-	
 	
 	// Function used to login with oneclick for development
 	boolean tryConnectDEV() {

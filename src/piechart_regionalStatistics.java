@@ -17,11 +17,7 @@ public class piechart_regionalStatistics {
 	 * Create the panel.
 	 */
 	public piechart_regionalStatistics(SQL_JDBC _jdbc) {
-		// *DEVELOPMENT*
-		if (_jdbc == null) {
-			jdbc = new SQL_JDBC(false);
-			jdbc.connect("jdbc:mysql://192.168.1.2:3306", "user2", "c8kPA8eHaXsBNEPE");
-		}
+		jdbc = _jdbc;
 			
 		// Define dictionaries(hashmaps) to hold important info
 		HashMap<Integer, String> idName = new HashMap<Integer, String>();
@@ -104,9 +100,9 @@ public class piechart_regionalStatistics {
 		
 		// Create the charts
 		chartUS = ChartFactory.createPieChart(
-				"US sales by State", datasetUS, false, true, false);
+				"US Sales by State", datasetUS, false, true, false);
 		chartOther = ChartFactory.createPieChart(
-				"Other sales by State/Province", datasetOther, false, true, false);
+				"Sales Outside the US", datasetOther, false, true, false);
 	}
 	
 	public JPanel getChartPanel_US(){
