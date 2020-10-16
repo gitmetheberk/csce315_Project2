@@ -17,6 +17,9 @@ public class EmployeeMap extends JPanel{
 	public EmployeeMap(SQL_JDBC _jdbc) {
 		jdbc = _jdbc;
 		generateMap();
+		JLabel labelForMap = new JLabel("");
+		labelForMap.setIcon(new ImageIcon("src/employeeMap.jpeg"));
+		this.add(labelForMap); //add the JLabel with the image inside to this instance of EmployeeMap JPanel
 	}
 	
 	private void generateMap() {
