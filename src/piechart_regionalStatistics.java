@@ -108,7 +108,7 @@ public class piechart_regionalStatistics {
 	
 	public JPanel getChartPanel_US(){
 		ChartPanel cp = new ChartPanel(chartUS);
-		cp.setSize(new Dimension(700,550));
+		cp.setSize(new Dimension(700,575));
 		return cp;
 	}
 	

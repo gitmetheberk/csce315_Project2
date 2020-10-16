@@ -19,10 +19,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import java.awt.Component;
 import javax.swing.Box;
-import java.awt.BorderLayout;
 import java.awt.Panel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 
 /* LIST OF PANELS:
  * Piechart - piechart_regionalStatistics.java - regional Sales Statistics US - getChartPanel_Other()
@@ -40,7 +37,7 @@ public class SQL_Dashboard extends JFrame {
 	private JPanel contentPane_primary;
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenuItem mntmNewMenuItem = new JMenuItem("Launch database client");
-	private final Component horizontalStrut = Box.createHorizontalStrut(1714);
+	private final Component horizontalStrut = Box.createHorizontalStrut(1726);
 	private final Panel panel_0 = new Panel();
 	private final Panel panel_1 = new Panel();
 	private final JPanel panel_2 = new JPanel();
@@ -76,7 +73,7 @@ public class SQL_Dashboard extends JFrame {
 		
 		//* DEVELOPMENT ONLY *
 		// Bypasses the login prompt so WindowBuilder will work if true
-		if (true) {
+		if (false) {
 			jdbc = new SQL_JDBC(false);
 			tryConnectDEV();
 			initGUI();
@@ -136,19 +133,19 @@ public class SQL_Dashboard extends JFrame {
 		JPanel pie_regional_US = pie_regionalSales.getChartPanel_US();
 		JPanel pie_regional_Other = pie_regionalSales.getChartPanel_Other();
 		
-		panel_0.setBounds(10, 578, 728, 484);
+		panel_0.setBounds(10, 617, 728, 445);
 		panel_0.add(pie_regional_Other);
-		panel_1.setBounds(10, 10, 728, 562);
+		panel_1.setBounds(10, 10, 728, 601);
 		
 		panel_1.add(pie_regional_US);
 		
 		panel_2.setBounds(1438, 0, 551, 341);
 		
 		panel_2.add(new EmployeePieChart(jdbc));
-		panel_3.setBounds(1438, 351, 551, 309);
+		panel_3.setBounds(1438, 728, 551, 309);
 		
 		panel_3.add(new CustomerDemoChart(jdbc));
-		panel_4.setBounds(1438, 702, 551, 341);
+		panel_4.setBounds(1438, 377, 551, 341);
 		
 		panel_4.add(new EmployeeMap(jdbc));
 		panel_6.setBounds(744, 465, 684, 431);
@@ -171,7 +168,7 @@ public class SQL_Dashboard extends JFrame {
 		contentPane_primary.add(panel_5);
 		contentPane_primary.add(panel_6);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblNewLabel.setBounds(1648, 670, 153, 33);
+		lblNewLabel.setBounds(1656, 348, 153, 33);
 		
 		contentPane_primary.add(lblNewLabel);
 		
@@ -291,7 +288,8 @@ public class SQL_Dashboard extends JFrame {
 		button_DEVLOGIN.setFont(new Font("Tahoma", Font.BOLD, 15));
 		button_DEVLOGIN.setBounds(7, 38, 68, 19);
 		
-		contentPane_primary.add(button_DEVLOGIN);
+		// TODO Comment out before submission
+		//contentPane_primary.add(button_DEVLOGIN);
 		
 		// Initialize the JDBC in default mode
 		jdbc = new SQL_JDBC(false);
