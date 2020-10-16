@@ -16,8 +16,8 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 
-public class MonthlyOrders extends JPanel {
-	
+public class MonthlyOrders {
+	private JPanel chartPanel;
 	private SQL_JDBC jdbc;
 
 	public MonthlyOrders(SQL_JDBC _jdbc) {
@@ -27,16 +27,15 @@ public class MonthlyOrders extends JPanel {
 	    // Create chart  
 	    JFreeChart chart = ChartFactory.createLineChart("Monthly Orders", "Month", "Number of Orders", dataset, PlotOrientation.VERTICAL, true, true, false);
 		// creatLineChart(Chart title, X-Axis Label, Y-Axis Label, dataset)
-	    try {
-			ChartUtilities. saveChartAsJPEG(new File("src/MonthlyOrderChart.jpeg"), chart,500,350);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    
+	    chartPanel = new ChartPanel(chart);
 		//ChartPanel panel = new ChartPanel(chart);
 	    //setContentPane(panel);
-	    
   }
+	
+	public JPanel get_chart() {
+		return chartPanel;
+	}
 
   private DefaultCategoryDataset createDataset() {
 	  DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -105,18 +104,31 @@ public class MonthlyOrders extends JPanel {
 		 
 		String series1 = "Number of Orders";
 		    
-		 dataset.addValue(cntJan, series1, "January");
-		 dataset.addValue(cntFeb, series1, "February");
-		 dataset.addValue(cntMar, series1, "March");
-		 dataset.addValue(cntApr, series1, "April");
+//		 dataset.addValue(cntJan, series1, "January");
+//		 dataset.addValue(cntFeb, series1, "February");
+//		 dataset.addValue(cntMar, series1, "March");
+//		 dataset.addValue(cntApr, series1, "April");
+//		 dataset.addValue(cntMay, series1, "May");
+//		 dataset.addValue(cntJun, series1, "June");
+//		 dataset.addValue(cntJul, series1, "July");
+//		 dataset.addValue(cntAug, series1, "August");
+//		 dataset.addValue(cntSep, series1, "September");
+//		 dataset.addValue(cntOct, series1, "Octomber");
+//		 dataset.addValue(cntNov, series1, "November");
+//		 dataset.addValue(cntDec, series1, "December");
+		
+		 dataset.addValue(cntJan, series1, "Jan");
+		 dataset.addValue(cntFeb, series1, "Feb");
+		 dataset.addValue(cntMar, series1, "Mar");
+		 dataset.addValue(cntApr, series1, "Apr");
 		 dataset.addValue(cntMay, series1, "May");
-		 dataset.addValue(cntJun, series1, "June");
-		 dataset.addValue(cntJul, series1, "July");
-		 dataset.addValue(cntAug, series1, "August");
-		 dataset.addValue(cntSep, series1, "September");
-		 dataset.addValue(cntOct, series1, "Octomber");
-		 dataset.addValue(cntNov, series1, "November");
-		 dataset.addValue(cntDec, series1, "December");
+		 dataset.addValue(cntJun, series1, "Jun");
+		 dataset.addValue(cntJul, series1, "Jul");
+		 dataset.addValue(cntAug, series1, "Aug");
+		 dataset.addValue(cntSep, series1, "Sep");
+		 dataset.addValue(cntOct, series1, "Oct");
+		 dataset.addValue(cntNov, series1, "Nov");
+		 dataset.addValue(cntDec, series1, "Dec");
 		  
     return dataset;
   }
