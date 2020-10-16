@@ -60,7 +60,7 @@ public class EmployeePieChart extends JPanel{
 			//change background color
 			employeeChart.setBackgroundPaint(new Color(168, 168, 168));
 			
-			ChartUtilities.saveChartAsJPEG(new File("src/employeePieChart.jpeg"), employeeChart, 500, 350);
+			ChartUtilities.saveChartAsJPEG(new File("src/employeePieChart.jpeg"), employeeChart, 500, 325);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

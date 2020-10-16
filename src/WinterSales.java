@@ -29,23 +29,35 @@ public class WinterSales {
 		DefaultCategoryDataset data = new DefaultCategoryDataset();
 		try {
 
-			ResultSet topTenProducts = jdbc.query("SELECT salesorderdetail.ProductID, product.Name, sum(linetotal) as Total "
-					+ "FROM purchaseorderdetail "
-					+ "INNER JOIN salesorderheader ON salesorderdetail.SalesOrderID=saleorderheader.SalesOrderID"
-					+ "INNER JOIN product ON salesorderdetail.ProductID=product.ProductID "
-					+ "WHERE OrderDate like \"%-12-%\" "
-					+ "OR OrderDate like \"%-01-%\" "
-					+ "OR OrderDate like \"%-02-%\" "
-					+ "GROUP BY ProductID "
-					+ "ORDER BY Total DESC LIMIT 10;");
+//			ResultSet topTenProducts = jdbc.query("SELECT salesorderdetail.ProductID, product.Name, sum(linetotal) as Total "
+//					+ "FROM purchaseorderdetail "
+//					+ "INNER JOIN salesorderheader ON salesorderdetail.SalesOrderID=saleorderheader.SalesOrderID"
+//					+ "INNER JOIN product ON salesorderdetail.ProductID=product.ProductID "
+//					+ "WHERE OrderDate like \"%-12-%\" "
+//					+ "OR OrderDate like \"%-01-%\" "
+//					+ "OR OrderDate like \"%-02-%\" "
+//					+ "GROUP BY ProductID "
+//					+ "ORDER BY Total DESC LIMIT 10;");
+
 			
-//			// Get all product names and store in a HashMap
-//			HashMap<Integer, String> idName = new HashMap<Integer, String>();
-//			
+			ResultSet topTenProducts = jdbc.query("SELECT Total, sales.ProductID, product.Name "
+					+ "FROM (SELECT ProductID, sum(LineTotal) AS Total "
+					+ "	FROM salesorderdetail "
+					+ "	INNER JOIN (SELECT * FROM salesorderheader "
+					+ "	where "
+					+ "		orderdate like '%-12-%' OR "
+					+ "		orderdate like '%-01-%' OR "
+					+ "		orderdate like '%-02-%') AS header "
+					+ "	ON salesorderdetail.SalesOrderID = header.SalesOrderID "
+					+ "	GROUP BY ProductID "
+					+ "	ORDER BY Total DESC "
+					+ "	LIMIT 10) AS sales "
+					+ "INNER JOIN product "
+					+ "ON sales.ProductID=product.ProductID;");
 
 			while (topTenProducts.next()) {
 				//1st column is the number of employees in the province, 2nd column is the province name
-				data.setValue(topTenProducts.getFloat("Total"), "Total Profit", topTenProducts.getString("Name")); 
+				data.setValue(topTenProducts.getFloat("Total"), "Total Profit", topTenProducts.getString("ProductID")); 
 			}
 
 			topTenProducts.close();
@@ -59,7 +71,7 @@ public class WinterSales {
 
 		JFreeChart barChartWorking = ChartFactory.createBarChart(
 				"Top 10 Products in Winter",
-				"Product",
+				"ProductID",
 				"Profit ($)",
 				dataset,
 				PlotOrientation.VERTICAL,

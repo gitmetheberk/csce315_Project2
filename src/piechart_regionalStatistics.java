@@ -6,6 +6,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.util.HashMap;
+import java.awt.Dimension;
 import java.sql.*;
 
 public class piechart_regionalStatistics {
@@ -106,10 +107,14 @@ public class piechart_regionalStatistics {
 	}
 	
 	public JPanel getChartPanel_US(){
-		return new ChartPanel(chartUS);
+		ChartPanel cp = new ChartPanel(chartUS);
+		cp.setSize(new Dimension(700,550));
+		return cp;
 	}
 	
 	public JPanel getChartPanel_Other() {
-		return new ChartPanel(chartOther);
+		ChartPanel cp = new ChartPanel(chartOther);
+		cp.setSize(new Dimension(700,475));
+		return cp;
 	}
 }

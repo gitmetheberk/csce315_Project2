@@ -21,6 +21,8 @@ import java.awt.Component;
 import javax.swing.Box;
 import java.awt.BorderLayout;
 import java.awt.Panel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 
 /* LIST OF PANELS:
  * Piechart - piechart_regionalStatistics.java - regional Sales Statistics US - getChartPanel_Other()
@@ -36,6 +38,16 @@ public class SQL_Dashboard extends JFrame {
 	private SQL_JDBC jdbc;
 	
 	private JPanel contentPane_primary;
+	private final JMenuBar menuBar = new JMenuBar();
+	private final JMenuItem mntmNewMenuItem = new JMenuItem("Launch database client");
+	private final Component horizontalStrut = Box.createHorizontalStrut(1714);
+	private final Panel panel_0 = new Panel();
+	private final Panel panel_1 = new Panel();
+	private final JPanel panel_2 = new JPanel();
+	private final JPanel panel_3 = new JPanel();
+	private final JPanel panel_4 = new JPanel();
+	private final JPanel panel_5 = new JPanel();
+	private final JPanel panel_6 = new JPanel();
 
 	/**
 	 * Launch the application.
@@ -59,7 +71,6 @@ public class SQL_Dashboard extends JFrame {
 	@SuppressWarnings("unused")
 	public SQL_Dashboard() {
 			setTitle("AdventureWorks Executive Dashboard");
-			setResizable(false);
 		// Get user credentials and initialize the jdbc
 		// Connect to the database
 		
@@ -94,7 +105,7 @@ public class SQL_Dashboard extends JFrame {
 	}
 	private void initGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1500, 844);
+		setBounds(100, 100, 2028, 1135);
 		
 		setJMenuBar(menuBar);
 		mntmNewMenuItem.addActionListener(new ActionListener() {
@@ -115,25 +126,56 @@ public class SQL_Dashboard extends JFrame {
 		
 		menuBar.add(mntmNewMenuItem);
 		
-		menuBar.add(mntmNewMenuItem_1);
-		
 		menuBar.add(horizontalStrut);
 		contentPane_primary = new JPanel();
 		contentPane_primary.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane_primary);
+		
+		// Add charts to panels
+		piechart_regionalStatistics pie_regionalSales = new piechart_regionalStatistics(jdbc);
+		JPanel pie_regional_US = pie_regionalSales.getChartPanel_US();
+		JPanel pie_regional_Other = pie_regionalSales.getChartPanel_Other();
+		
+		panel_0.setBounds(10, 578, 728, 484);
+		panel_0.add(pie_regional_Other);
+		panel_1.setBounds(10, 10, 728, 562);
+		
+		panel_1.add(pie_regional_US);
+		
+		panel_2.setBounds(1438, 0, 551, 341);
+		
+		panel_2.add(new EmployeePieChart(jdbc));
+		panel_3.setBounds(1438, 351, 551, 309);
+		
+		panel_3.add(new CustomerDemoChart(jdbc));
+		panel_4.setBounds(1438, 702, 551, 341);
+		
+		panel_4.add(new EmployeeMap(jdbc));
+		panel_6.setBounds(744, 465, 684, 431);
+		
+		panel_5.add(new WinterSales(jdbc).getChart());
+		
+		panel_6.add(new MonthlyOrders(jdbc).get_chart());
 		contentPane_primary.setLayout(null);
-		panel_left.setBounds(130, 75, 586, 483);
+		contentPane_primary.add(panel_0);
+		contentPane_primary.add(panel_1);
+		panel_1.setLayout(null);
 		
-		panel_left.add(new piechart_regionalStatistics(jdbc).getChartPanel_US());
 		
-		contentPane_primary.add(panel_left);
-		panel_right.setBounds(722, 75, 598, 483);
 		
-		contentPane_primary.add(panel_right);
+		
+		contentPane_primary.add(panel_2);
+		contentPane_primary.add(panel_3);
+		contentPane_primary.add(panel_4);
+		panel_5.setBounds(744, 10, 684, 445);
+		contentPane_primary.add(panel_5);
+		contentPane_primary.add(panel_6);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNewLabel.setBounds(1648, 670, 153, 33);
+		
+		contentPane_primary.add(lblNewLabel);
+		
 	}
-	
-	// Login panel ------------------------------------------------------
-	
 	
 	private JPanel contentPane;
 	private final JTextField textField_user = new JTextField();
@@ -143,12 +185,7 @@ public class SQL_Dashboard extends JFrame {
 	private final JLabel label_userid = new JLabel("UserID");
 	private final JLabel label_password = new JLabel("Password");
 	private final JButton button_DEVLOGIN = new JButton("DEV");
-	private final JMenuBar menuBar = new JMenuBar();
-	private final JMenuItem mntmNewMenuItem = new JMenuItem("Launch database client");
-	private final JMenuItem mntmNewMenuItem_1 = new JMenuItem("Do something");
-	private final Component horizontalStrut = Box.createHorizontalStrut(1000);
-	private final Panel panel_left = new Panel();
-	private final Panel panel_right = new Panel();
+	private final JLabel lblNewLabel = new JLabel("Employee Locations");
 	
 	boolean tryConnect() {
 		String url = textField_URL.getText();

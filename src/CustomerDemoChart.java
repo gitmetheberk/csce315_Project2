@@ -12,14 +12,14 @@ import org.knowm.xchart.style.PieStyler.AnnotationType;
 @SuppressWarnings("serial")
 public class CustomerDemoChart extends JPanel {
 
-final PieChart chart = new PieChartBuilder().width(400).height(400).title("Customer Demographics").build();
+final PieChart chart = new PieChartBuilder().width(300).height(300).title("Customer Demographics").build();
 	
 	public CustomerDemoChart(SQL_JDBC jdbc) {
-		setLayout(null);
+		//setLayout(null);
 		initChart(jdbc);
 		JPanel chartPanel = new XChartPanel<PieChart>(chart);
-		chartPanel.setBounds(0, 0, 400, 400);
-		chartPanel.setLayout(null);
+		//chartPanel.setBounds(0, 0, 400, 400);
+		//chartPanel.setLayout(null);
 		add(chartPanel);
 	}
 	
