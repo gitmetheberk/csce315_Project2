@@ -95,8 +95,6 @@ public class SQL_JDBC {
 			// Initialize a statement from the connection
 			Statement st = connection.createStatement();
 			
-			
-			
 			// Execute the query
 			st.executeQuery("use adventureworks");
 			rs = st.executeQuery(query);
