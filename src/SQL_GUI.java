@@ -397,7 +397,7 @@ public class SQL_GUI extends JFrame {
 		button_DEVLOGIN.setFont(new Font("Tahoma", Font.BOLD, 15));
 		button_DEVLOGIN.setBounds(7, 38, 68, 19);
 		
-		contentPane.add(button_DEVLOGIN);
+		//contentPane.add(button_DEVLOGIN);
 		
 		// Initialize the JDBC in default mode
 		jdbc = new SQL_JDBC(false);

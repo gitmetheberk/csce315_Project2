@@ -73,34 +73,35 @@ public class SQL_Dashboard extends JFrame {
 		
 		//* DEVELOPMENT ONLY *
 		// Bypasses the login prompt so WindowBuilder will work if true
-		if (false) {
-			jdbc = new SQL_JDBC(false);
-			tryConnectDEV();
-			initGUI();
-			return;
-		} else {
-			if (login()) {
-				initGUI();
-				
-			} else {
-				// User has closed/cancelled connection, abort
-				dispose();
-				System.exit(1);
-			}
-		}
+//		if (false) {
+//			jdbc = new SQL_JDBC(false);
+//			tryConnectDEV();
+//			initGUI();
+//			return;
+//		} else {
+//			if (login()) {
+//				initGUI();
+//				
+//			} else {
+//				// User has closed/cancelled connection, abort
+//				dispose();
+//				System.exit(1);
+//			}
+//		}
 		//* DEVELOPMENT ONLY *
 	
 		// TODO Uncomment for production and remove development block
-//		if (login()) {
-//			initGUI();
-//			
-//		} else {
-//			// User has closed/cancelled connection, abort
-//			dispose();
-//			System.exit(1);
-//		}
+		if (login()) {
+			initGUI();
+			
+		} else {
+			// User has closed/cancelled connection, abort
+			dispose();
+			System.exit(1);
+		}
 	}
 	private void initGUI() {
+		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 2028, 1135);
 		
