@@ -1,17 +1,28 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.Component;
+import java.awt.Dimension;
 
 @SuppressWarnings("serial")
 public class SQL_GUI extends JFrame {
@@ -53,7 +64,7 @@ public class SQL_GUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SQL_GUI frame = new SQL_GUI();
+					SQL_GUI frame = new SQL_GUI(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -65,38 +76,29 @@ public class SQL_GUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public SQL_GUI() {
+	public SQL_GUI(SQL_JDBC _jdbc) {
 		// JDBC init -------------------------------------------------------
-		
-		// Initialize the jdbc
-		jdbc = new SQL_JDBC();
-		
-		// While not connected, try to connect until connected or 10 attempts
-		int c = 0;
-		while (!jdbc.isConnected() && c < 9) {
-			System.out.println("Connection attempt " + c);
-			// Wait a second before trying again
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				System.out.println("ERROR: A thread exception has occured while attempting to connect to the Database");
-				System.out.println(e1);
-				e1.printStackTrace();
+		// Determine whether or not to launch login prompt
+		if (_jdbc == null) {
+			// Connect to the database
+			if (login()) {
+				// Initialize the CLI with the existing jdbc
+				CLI = new SQL_CommandLineInterpreter(jdbc);
+				
+				initGUI();
+				
+			} else {
+				// User has closed/cancelled connection, abort
+				dispose();
+				System.exit(1);
 			}
-			jdbc.connect();
-			c++;
+		} else {
+			// Must have been launched with a pre-existing JDBC
+			jdbc = _jdbc;
+			CLI = new SQL_CommandLineInterpreter(jdbc);
+			initGUI();
 		}
 		
-		if (!jdbc.isConnected()) {
-			System.out.println("ERROR: Could not connect to Database after 10 attempts");
-			throw new RuntimeException();
-		}
-		
-		// Initialize the CLI with the existing jdbc
-		CLI = new SQL_CommandLineInterpreter(jdbc);
-		
-		
-		initGUI();
 	}
 	private void initGUI() {
 		setTitle("AdventureWorks Database Client");
@@ -280,5 +282,152 @@ public class SQL_GUI extends JFrame {
 		});
 		
 		menuBar.add(menuItem_help);
+	}
+	
+	// Login panel ------------------------------------------------------
+	private JPanel contentPane;
+	private final JTextField textField_user = new JTextField();
+	private final JTextField textField_pass = new JTextField();
+	private final JTextField textField_URL = new JTextField();
+	private final JLabel label_url = new JLabel("DB URL");
+	private final JLabel label_userid = new JLabel("UserID");
+	private final JLabel label_password = new JLabel("Password");
+	private final JButton button_DEVLOGIN = new JButton("DEV");
+	
+	boolean tryConnect() {
+		String url = textField_URL.getText();
+		String user = textField_user.getText();
+		String pass = textField_pass.getText();
+		
+		if (url.isEmpty() || user.isEmpty() || pass.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "ERROR: One or more fields is empty");
+			return false;
+		}
+		
+		// Append jdbc:mysql:// if needed
+		if (!url.contains("jdbc:mysql://")) {	
+			url = "jdbc:mysql://" + url;
+		}
+		
+		// Try to connect
+		boolean connected = jdbc.connect(url, user, pass);
+		
+		if (!connected) {
+			JOptionPane.showMessageDialog(null, "ERROR: Could not connect to database, please try again");
+		}
+		
+		return connected;
+	}
+	
+	// Function used to login with oneclick for development
+	boolean tryConnectDEV() {
+		return jdbc.connect("jdbc:mysql://localhost:3306", "user2", "c8kPA8eHaXsBNEPE");
+	}
+	
+	boolean login() {
+		// Initialize the login panel
+		contentPane = new JPanel();
+		contentPane.setBounds(100, 100, 320, 238);
+		//contentPane.setBackground(Color.LIGHT_GRAY);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
+		
+		textField_user.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB) {
+					textField_pass.requestFocusInWindow();
+				}
+			}
+		});
+		textField_user.setBounds(85, 56, 212, 30);
+		textField_user.setColumns(10);
+		
+		contentPane.add(textField_user);
+		textField_pass.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					tryConnect();
+				}
+			}
+		});
+		textField_pass.setColumns(10);
+		textField_pass.setBounds(85, 102, 212, 30);
+		
+		contentPane.add(textField_pass);
+		
+		textField_URL.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB) {
+					textField_user.requestFocusInWindow();
+				}
+			}
+		});
+		textField_URL.setColumns(10);
+		textField_URL.setBounds(85, 10, 212, 30);
+		
+		contentPane.add(textField_URL);
+		label_url.setFont(new Font("Tahoma", Font.BOLD, 13));
+		label_url.setBounds(10, 10, 58, 30);
+		
+		contentPane.add(label_url);
+		label_userid.setFont(new Font("Tahoma", Font.BOLD, 13));
+		label_userid.setBounds(10, 56, 58, 30);
+		
+		contentPane.add(label_userid);
+		label_password.setFont(new Font("Tahoma", Font.BOLD, 13));
+		label_password.setBounds(10, 102, 68, 30);
+		
+		contentPane.add(label_password);
+		button_DEVLOGIN.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField_URL.setText("DEV credentials");
+				if (tryConnectDEV()) {
+					textField_user.setText("Status: Connected");
+					textField_pass.setText("Click \"Connect\" to continue");
+				} else {
+					textField_user.setText("Status: Unable to connect");
+					textField_pass.setText("Click \"DEV\" to try again");
+				}
+			}
+		});
+		button_DEVLOGIN.setBackground(Color.RED);
+		button_DEVLOGIN.setFont(new Font("Tahoma", Font.BOLD, 15));
+		button_DEVLOGIN.setBounds(7, 38, 68, 19);
+		
+		//contentPane.add(button_DEVLOGIN);
+		
+		// Initialize the JDBC in default mode
+		jdbc = new SQL_JDBC(false);
+		
+		// Adjust JOptionPane to suit needs
+		UIManager.put("OptionPane.minimumSize",new Dimension(350, 200)); 
+		UIManager.put("OptionPane.yesButtonText", "Connect");
+		UIManager.put("OptionPane.noButtonText", "Cancel");
+		
+		// Loop until connected or cancelled
+		int result;
+		while (!jdbc.isConnected()) {
+			result = JOptionPane.showConfirmDialog(this, contentPane, "AdventureWorks Client Login", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			
+			if (result == JOptionPane.YES_OPTION) {
+				if (!jdbc.isConnected()) {
+					tryConnect();
+				} else {
+					break;
+				}
+			} else {
+				return false;
+			}
+		}
+		
+		// Change options back
+		UIManager.put("OptionPane.minimumSize",new Dimension(200,100)); 
+		UIManager.put("OptionPane.yesButtonText", "Yes");
+		UIManager.put("OptionPane.noButtonText", "No");
+		
+		return true;
 	}
 }

@@ -3,12 +3,13 @@ import java.sql.*;
 // Utility class to query the database, expects SQL code and returns ResultSets
 public class SQL_JDBC {
 	// Note by setting the serverTimezone argument, date/time stamps may be incorrect
-	private static final String DB_URL = "jdbc:mysql://192.168.1.77:3306/adventureworks?serverTimezone=US/Central";
-	
+	// private static final String DB_URL = "jdbc:mysql://192.168.1.77:3306/adventureworks?serverTimezone=US/Central";
+	private String DB_URL = "jdbc:mysql://localhost:3306";
+
 	// Not a fan of just having the password in the java file, just saying
 	// The right way to do this is probably referencing environment variables which van be git ignored or asking the user to login them selves
-	private static final String USER = "user2";
-	private static final String PASS = "c8kPA8eHaXsBNEPE";
+	private String USER = "user2";
+	private String PASS = "c8kPA8eHaXsBNEPE";
 	
 	// Holds connection info for the DB, established in the constructor
 	private Connection connection;
@@ -16,7 +17,7 @@ public class SQL_JDBC {
 	// Status flag: Whether or not connection is valid
 	private boolean connected;
 	
-	
+	// This remains to provide legacy functionality to SQL_ComamandLine
 	public SQL_JDBC() {
 		// Establish DB connection with error handling
 		try {
@@ -35,6 +36,15 @@ public class SQL_JDBC {
 			connection = null;
 			connected = false;
 		}
+	}
+	
+	// Needed a clean constructor for use in SQL_LOGIN, added a dummy parameter
+	public SQL_JDBC(boolean notAValue) {
+		connection = null;
+		connected = false;
+		DB_URL = "";
+		PASS = "";
+		USER = "";
 	}
 	
 	// Utility function which attempts to connect to the DB and returns whether or not it was successful
@@ -62,6 +72,17 @@ public class SQL_JDBC {
 		return connected;
 	}
 	
+	// Attempt to connect to the DB with custom login
+	public boolean connect(String url, String user, String pass) {
+		DB_URL = url;
+		USER = user;
+		PASS = pass;
+		
+		return connect();
+	}
+	
+	
+	
 	public ResultSet query(String query) {
 		ResultSet rs = null;
 		if (!connected) {
@@ -73,8 +94,6 @@ public class SQL_JDBC {
 		try {
 			// Initialize a statement from the connection
 			Statement st = connection.createStatement();
-			
-			
 			
 			// Execute the query
 			st.executeQuery("use adventureworks");
@@ -156,6 +175,15 @@ public class SQL_JDBC {
 	// Returns true if the JDBC is connected to the data base
 	public boolean isConnected() {
 		return connected;
+	}
+	
+	
+	public String getDB_URL() {
+		return DB_URL;
+	}
+
+	public String getUSER() {
+		return USER;
 	}
 	
 }
